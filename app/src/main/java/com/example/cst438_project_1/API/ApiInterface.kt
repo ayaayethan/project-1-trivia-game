@@ -7,5 +7,5 @@ import retrofit2.http.Query
 
 interface ApiInterface {
     @GET("/games")
-    fun getGames(@Query("key") key : String): Response<List<Game>>
+    suspend fun getGames(@Query("key") key : String): Response<List<Game>>
 }
