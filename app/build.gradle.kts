@@ -6,9 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.cst438_project_1"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.cst438_project_1"
@@ -40,9 +38,9 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    implementation ("androidx.room:room-runtime:2.6.1")
-    implementation ("androidx.room:room-ktx:2.6.1")
-    ksp ("androidx.room:room-compiler:2.6.1")
+    implementation ("androidx.room:room-runtime:2.7.0")
+    implementation ("androidx.room:room-ktx:2.7.0")
+    ksp ("androidx.room:room-compiler:2.7.0")
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
