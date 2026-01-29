@@ -49,7 +49,7 @@ class AuthActivity : ComponentActivity() {
     }
 
     private fun onSuccessfulAuth() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, GameActivity::class.java)
         startActivity(intent)
         finish()
     }
