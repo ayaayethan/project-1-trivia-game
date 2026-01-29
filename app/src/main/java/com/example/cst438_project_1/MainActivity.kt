@@ -60,12 +60,19 @@ class MainActivity : ComponentActivity() {
         NavHost(navController = navController, startDestination = "login") {
             composable("login") {
                 LoginScreen(
+                    // TODO: Add login validation logic here
+                    // - Validate username/password against database
+                    // - Show error message if credentials invalid
                     onLoginClick = { onSuccessfulAuth() },
                     onSignUpClick = { navController.navigate("signup") }
                 )
             }
             composable("signup"){
                 SignUpScreen(
+                    // TODO: Add signup validation logic here
+                    // - Check if username already exists
+                    // - Validate password requirements
+                    // - Create new user in database
                     onSignUpClick = { onSuccessfulAuth() },
                     onBackClick = { navController.popBackStack() }
                 )
