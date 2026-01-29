@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Cst438project1">
         <activity
-            android:name=".AuthActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Cst438project1">
@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GameActivity"
+            android:name=".StartGameActivity"
             android:exported="false"
             android:theme="@style/Theme.Cst438project1" />
     </application>
