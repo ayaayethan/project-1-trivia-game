@@ -84,6 +84,11 @@ fun MainMenuScreen(
                 text = "Game Diff",
                 style = MaterialTheme.typography.headlineLarge
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "pick which game you think is rated higher",
+                style = MaterialTheme.typography.bodyMedium
+            )
             Spacer(modifier = Modifier.height(24.dp))
             Button(onClick = onPlayClick) {
                 Text(text = "Play")
