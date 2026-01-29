@@ -1,5 +1,6 @@
 package com.example.cst438_project_1
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,21 +14,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -45,36 +38,27 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigation()
+                    AppNavigation(onLogout = { onLogout() })
                 }
             }
         }
     }
+
+    private fun onLogout() {
+        val intent = Intent(this, AuthActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
 }
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(onLogout: () -> Unit) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "login") {
-        composable("login") {
-            LoginScreen(
-                onLoginClick = {
-                    // For now, allow empty credentials
-                    navController.navigate("main_menu") { popUpTo("login") { inclusive = true } }
-                },
-                onSignUpClick = { navController.navigate("signup") }
-            )
-        }
-        composable("signup"){
-            SignUpScreen(
-                onSignUpClick = { navController.navigate("main_menu") { popUpTo("login") { inclusive = true } } },
-                onBackClick = { navController.popBackStack() }
-            )
-        }
+    NavHost(navController = navController, startDestination = "main_menu") {
         composable("main_menu") {
             MainMenuScreen(
                 onPlayClick = { navController.navigate("game_screen") },
-                onLogoutClick = { navController.navigate("login") { popUpTo("main_menu") { inclusive = true } } },
+                onLogoutClick = onLogout,
                 onHelpClick = {}
             )
         }
@@ -83,88 +67,6 @@ fun AppNavigation() {
         }
     }
 }
-
-@Composable
-fun LoginScreen(modifier: Modifier = Modifier, onLoginClick: () -> Unit, onSignUpClick: () -> Unit) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Login", style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onLoginClick) {
-            Text(text = "Login")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onSignUpClick) {
-            Text(text = "Sign Up")
-        }
-    }
-}
-
-@Composable
-fun SignUpScreen(modifier: Modifier = Modifier, onSignUpClick: () -> Unit, onBackClick: () -> Unit) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Sign Up", style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onSignUpClick) {
-            Text(text = "Sign Up")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onBackClick) {
-            Text(text = "Back")
-        }
-    }
-}
-
 
 @Composable
 fun MainMenuScreen(
@@ -216,22 +118,6 @@ fun GameScreen(modifier: Modifier = Modifier, onQuitClick: () -> Unit = {}) {
         Button(onClick = onQuitClick) {
             Text(text = "Quit")
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    Cst438project1Theme {
-        LoginScreen(onLoginClick = {}, onSignUpClick = {})
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SignUpScreenPreview() {
-    Cst438project1Theme {
-        SignUpScreen(onSignUpClick = {}, onBackClick = {})
     }
 }
 
