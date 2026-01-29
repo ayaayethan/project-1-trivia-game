@@ -12,7 +12,7 @@ data class UserEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val username: String,
 
-    // Stored as BLOB via TypeConverters
+    // Stored directly as SQLite BLOB
     val salt: ByteArray,
     val passwordHash: ByteArray,
 
