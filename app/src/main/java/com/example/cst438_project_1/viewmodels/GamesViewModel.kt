@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 import kotlin.random.nextInt
 import com.example.cst438_project_1.BuildConfig
+import kotlinx.coroutines.Dispatchers
 
 class GamesViewModel : ViewModel() {
     private val _games = MutableLiveData<List<Game>>()
@@ -39,6 +40,22 @@ class GamesViewModel : ViewModel() {
             } catch (e: Exception){
                 Log.e("API: ", "Exception: ${e.message}")
             }
+        }
+    }
+
+    // Simple function to log games from the API
+    fun debugFetchGames() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val apiKey : String = BuildConfig.API_KEY
+
+            val response = RetrofitInstance.api.getGames(
+                key = apiKey,
+                page = 1,
+                page_size = 10,
+                metacritic = "70,100"
+            )
+
+            Log.d("API DEBUG", response.body()?.results.toString())
         }
     }
 }
