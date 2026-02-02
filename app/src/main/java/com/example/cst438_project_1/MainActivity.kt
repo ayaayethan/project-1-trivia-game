@@ -12,14 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.cst438_project_1.data.db.AppDatabase
 import com.example.cst438_project_1.data.repository.AuthRepository
 import com.example.cst438_project_1.ui.theme.Cst438project1Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.CoroutineScope
 
 class MainActivity : ComponentActivity() {
 
@@ -28,7 +29,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Remove any test signUp calls you may have left here
         val db = AppDatabase.getInstance(applicationContext)
         repo = AuthRepository(db.userDao())
 
@@ -36,10 +36,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             Cst438project1Theme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    AuthScreen(
-                        onLoginSuccess = { navigateToStartGame() },
+                    AuthNavGraph(
                         repo = repo,
-                        lifecycleActivity = this@MainActivity
+                        onLoginSuccess = { navigateToStartGame() }
                     )
                 }
             }
@@ -53,33 +52,62 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AuthScreen(
-    onLoginSuccess: () -> Unit,
+private fun AuthNavGraph(
     repo: AuthRepository,
-    lifecycleActivity: ComponentActivity
+    onLoginSuccess: () -> Unit
 ) {
-    // Use SnackbarHostState directly (Material3 friendly)
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = "login"
+    ) {
+        composable("login") {
+            LoginScreen(
+                repo = repo,
+                onLoginSuccess = onLoginSuccess,
+                onGoToSignUp = { navController.navigate("signup") }
+            )
+        }
+        composable("signup") {
+            SignUpScreen(
+                repo = repo,
+                onSignUpDoneGoToLogin = {
+                    // Force login screen to be recreated (clears any old login state)
+                    navController.navigate("login") {
+                        popUpTo("login") { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
+                onBackToLogin = { navController.popBackStack() }
+            )
+        }
+    }
+}
+
+@Composable
+private fun LoginScreen(
+    repo: AuthRepository,
+    onLoginSuccess: () -> Unit,
+    onGoToSignUp: () -> Unit
+) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val uiScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var busyLogin by remember { mutableStateOf(false) }
-    var busySignUp by remember { mutableStateOf(false) }
+    var busy by remember { mutableStateOf(false) }
 
-    Scaffold(
-        // pass SnackbarHost to Scaffold in Material3
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
-    ) { innerPadding ->
+    Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { inner ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(inner)
                 .padding(24.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Welcome", style = MaterialTheme.typography.headlineMedium)
+            Text("Login", style = MaterialTheme.typography.headlineMedium)
             Spacer(Modifier.height(16.dp))
 
             OutlinedTextField(
@@ -103,74 +131,143 @@ fun AuthScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Button(
-                    onClick = {
-                        // LOGIN
-                        if (username.isBlank() || password.isBlank()) {
-                            uiScope.launch { snackbarHostState.showSnackbar("Please enter username and password") }
-                            return@Button
-                        }
-                        busyLogin = true
-                        lifecycleActivity.lifecycleScope.launch {
-                            val res = withContext(Dispatchers.IO) {
-                                repo.login(username.trim(), password)
-                            }
-                            busyLogin = false
-                            res.fold(
-                                onSuccess = {
-                                    onLoginSuccess()
-                                },
-                                onFailure = {
-                                    uiScope.launch { snackbarHostState.showSnackbar(it.message ?: "Login failed") }
-                                }
-                            )
-                        }
-                    },
-                    enabled = !busyLogin && !busySignUp,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(if (busyLogin) "Logging in..." else "Login")
-                }
+            Button(
+                onClick = {
+                    val u = username.trim()
+                    if (u.isBlank() || password.isBlank()) {
+                        scope.launch { snackbarHostState.showSnackbar("Enter username and password") }
+                        return@Button
+                    }
 
-                Spacer(Modifier.width(12.dp))
-
-                OutlinedButton(
-                    onClick = {
-                        // SIGN UP
-                        if (username.isBlank() || password.isBlank()) {
-                            uiScope.launch { snackbarHostState.showSnackbar("Enter username and password to sign up") }
-                            return@OutlinedButton
-                        }
-                        busySignUp = true
-                        lifecycleActivity.lifecycleScope.launch {
-                            val res = withContext(Dispatchers.IO) {
-                                repo.signUp(username.trim(), password)
-                            }
-                            busySignUp = false
-                            res.fold(
-                                onSuccess = {
-                                    uiScope.launch { snackbarHostState.showSnackbar("Account created. Please Login.") }
-                                },
-                                onFailure = {
-                                    uiScope.launch { snackbarHostState.showSnackbar(it.message ?: "Sign up failed") }
-                                }
-                            )
-                        }
-                    },
-                    enabled = !busySignUp && !busyLogin,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(if (busySignUp) "Signing up..." else "Sign Up")
-                }
+                    busy = true
+                    scope.launch {
+                        val res = withContext(Dispatchers.IO) { repo.login(u, password) }
+                        busy = false
+                        res.fold(
+                            onSuccess = { onLoginSuccess() },
+                            onFailure = { snackbarHostState.showSnackbar(it.message ?: "Login failed") }
+                        )
+                    }
+                },
+                enabled = !busy,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(if (busy) "Logging in..." else "Login")
             }
+
+            Spacer(Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = onGoToSignUp,
+                enabled = !busy,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Don’t have an account? Sign Up")
+            }
+        }
+    }
+}
+
+@Composable
+private fun SignUpScreen(
+    repo: AuthRepository,
+    onSignUpDoneGoToLogin: () -> Unit,
+    onBackToLogin: () -> Unit
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var busy by remember { mutableStateOf(false) }
+
+    Scaffold(snackbarHost = { SnackbarHost(hostState = snackbarHostState) }) { inner ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(inner)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Sign Up", style = MaterialTheme.typography.headlineMedium)
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Username") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                label = { Text("Confirm Password") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
 
             Spacer(Modifier.height(16.dp))
 
-            Text(
-                "Tip: sign up first with a username/password, then press Login.",
-                style = MaterialTheme.typography.bodySmall
-            )
+            Button(
+                onClick = {
+                    val u = username.trim()
+                    if (u.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
+                        scope.launch { snackbarHostState.showSnackbar("Fill out all fields") }
+                        return@Button
+                    }
+                    if (password != confirmPassword) {
+                        scope.launch { snackbarHostState.showSnackbar("Passwords do not match") }
+                        return@Button
+                    }
+
+                    busy = true
+                    scope.launch {
+                        val res = withContext(Dispatchers.IO) { repo.signUp(u, password) }
+                        busy = false
+                        res.fold(
+                            onSuccess = {
+                                snackbarHostState.showSnackbar("Account created. Please log in.")
+                                onSignUpDoneGoToLogin()
+                            },
+                            onFailure = {
+                                snackbarHostState.showSnackbar(it.message ?: "Sign up failed")
+                            }
+                        )
+                    }
+                },
+                enabled = !busy,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(if (busy) "Creating..." else "Create Account")
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = onBackToLogin,
+                enabled = !busy,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Back to Login")
+            }
         }
     }
 }
