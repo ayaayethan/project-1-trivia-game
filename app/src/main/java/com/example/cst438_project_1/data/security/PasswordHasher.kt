@@ -3,6 +3,7 @@ package com.example.cst438_project_1.data.security
 import java.security.SecureRandom
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 
 object PasswordHasher {
     private const val ITERATIONS = 120_000
