@@ -5,175 +5,172 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.lifecycleScope
+import com.example.cst438_project_1.data.db.AppDatabase
+import com.example.cst438_project_1.data.repository.AuthRepository
 import com.example.cst438_project_1.ui.theme.Cst438project1Theme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CoroutineScope
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var repo: AuthRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Remove any test signUp calls you may have left here
+        val db = AppDatabase.getInstance(applicationContext)
+        repo = AuthRepository(db.userDao())
+
         enableEdgeToEdge()
         setContent {
             Cst438project1Theme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    AuthNavigation()
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    AuthScreen(
+                        onLoginSuccess = { navigateToStartGame() },
+                        repo = repo,
+                        lifecycleActivity = this@MainActivity
+                    )
                 }
             }
         }
     }
 
-    private fun onSuccessfulAuth() {
-        val intent = Intent(this, StartGameActivity::class.java)
-        startActivity(intent)
+    private fun navigateToStartGame() {
+        startActivity(Intent(this, StartGameActivity::class.java))
         finish()
     }
-
-    @Composable
-    fun AuthNavigation() {
-        val navController = rememberNavController()
-        NavHost(navController = navController, startDestination = "login") {
-            composable("login") {
-                LoginScreen(
-                    // TODO: Add login validation logic here
-                    // - Validate username/password against database
-                    // - Show error message if credentials invalid
-                    onLoginClick = { onSuccessfulAuth() },
-                    onSignUpClick = { navController.navigate("signup") }
-                )
-            }
-            composable("signup"){
-                SignUpScreen(
-                    // TODO: Add signup validation logic here
-                    // - Check if username already exists
-                    // - Validate password requirements
-                    // - Create new user in database
-                    onSignUpClick = { onSuccessfulAuth() },
-                    onBackClick = { navController.popBackStack() }
-                )
-            }
-        }
-    }
 }
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, onLoginClick: () -> Unit, onSignUpClick: () -> Unit) {
+fun AuthScreen(
+    onLoginSuccess: () -> Unit,
+    repo: AuthRepository,
+    lifecycleActivity: ComponentActivity
+) {
+    // Use SnackbarHostState directly (Material3 friendly)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val uiScope = rememberCoroutineScope()
+
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var busyLogin by remember { mutableStateOf(false) }
+    var busySignUp by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Login", style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onLoginClick) {
-            Text(text = "Login")
+    Scaffold(
+        // pass SnackbarHost to Scaffold in Material3
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Welcome", style = MaterialTheme.typography.headlineMedium)
+            Spacer(Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Username") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    onClick = {
+                        // LOGIN
+                        if (username.isBlank() || password.isBlank()) {
+                            uiScope.launch { snackbarHostState.showSnackbar("Please enter username and password") }
+                            return@Button
+                        }
+                        busyLogin = true
+                        lifecycleActivity.lifecycleScope.launch {
+                            val res = withContext(Dispatchers.IO) {
+                                repo.login(username.trim(), password)
+                            }
+                            busyLogin = false
+                            res.fold(
+                                onSuccess = {
+                                    onLoginSuccess()
+                                },
+                                onFailure = {
+                                    uiScope.launch { snackbarHostState.showSnackbar(it.message ?: "Login failed") }
+                                }
+                            )
+                        }
+                    },
+                    enabled = !busyLogin && !busySignUp,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(if (busyLogin) "Logging in..." else "Login")
+                }
+
+                Spacer(Modifier.width(12.dp))
+
+                OutlinedButton(
+                    onClick = {
+                        // SIGN UP
+                        if (username.isBlank() || password.isBlank()) {
+                            uiScope.launch { snackbarHostState.showSnackbar("Enter username and password to sign up") }
+                            return@OutlinedButton
+                        }
+                        busySignUp = true
+                        lifecycleActivity.lifecycleScope.launch {
+                            val res = withContext(Dispatchers.IO) {
+                                repo.signUp(username.trim(), password)
+                            }
+                            busySignUp = false
+                            res.fold(
+                                onSuccess = {
+                                    uiScope.launch { snackbarHostState.showSnackbar("Account created. Please Login.") }
+                                },
+                                onFailure = {
+                                    uiScope.launch { snackbarHostState.showSnackbar(it.message ?: "Sign up failed") }
+                                }
+                            )
+                        }
+                    },
+                    enabled = !busySignUp && !busyLogin,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(if (busySignUp) "Signing up..." else "Sign Up")
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            Text(
+                "Tip: sign up first with a username/password, then press Login.",
+                style = MaterialTheme.typography.bodySmall
+            )
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onSignUpClick) {
-            Text(text = "Sign Up")
-        }
-    }
-}
-
-@Composable
-fun SignUpScreen(modifier: Modifier = Modifier, onSignUpClick: () -> Unit, onBackClick: () -> Unit) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Sign Up", style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onSignUpClick) {
-            Text(text = "Sign Up")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onBackClick) {
-            Text(text = "Back")
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    Cst438project1Theme {
-        LoginScreen(onLoginClick = {}, onSignUpClick = {})
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SignUpScreenPreview() {
-    Cst438project1Theme {
-        SignUpScreen(onSignUpClick = {}, onBackClick = {})
     }
 }

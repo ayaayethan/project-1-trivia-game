@@ -20,4 +20,7 @@ interface UserDao {
 
     @Update
     suspend fun update(user: UserEntity): Int
+
+    @Query("UPDATE users SET currentStreak = :current, highestStreak = :highest WHERE id = :userId")
+    suspend fun updateStreaks(userId: Long, current: Int, highest: Int): Int
 }

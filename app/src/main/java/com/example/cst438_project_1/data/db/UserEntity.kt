@@ -9,10 +9,10 @@ import androidx.room.PrimaryKey
     indices = [Index(value = ["username"], unique = true)]
 )
 data class UserEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val username: String,
 
-    // Stored directly as SQLite BLOB
+    // Stored as SQLite BLOB (Room supports ByteArray)
     val salt: ByteArray,
     val passwordHash: ByteArray,
 
