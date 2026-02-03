@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -64,8 +65,7 @@ fun AppNavigation(onLogout: () -> Unit) {
         composable("main_menu") {
             MainMenuScreen(
                 onPlayClick = { navController.navigate("game_screen") },
-                onLogoutClick = onLogout,
-                onHelpClick = {}
+                onLogoutClick = onLogout
             )
         }
         composable("game_screen") {
@@ -78,9 +78,24 @@ fun AppNavigation(onLogout: () -> Unit) {
 fun MainMenuScreen(
     modifier: Modifier = Modifier,
     onPlayClick: () -> Unit = {},
-    onLogoutClick: () -> Unit = {},
-    onHelpClick: () -> Unit = {}
+    onLogoutClick: () -> Unit = {}
 ) {
+    val dialogEnabled = remember { mutableStateOf(false) }
+    if (dialogEnabled.value) {
+        AlertDialog(
+            onDismissRequest = {dialogEnabled.value = false},
+            title = { Text(text = "Welcome to Game Diff!")},
+            text = {
+                Text(text = "Select which game you think is rated higher! " +
+                        "If your guess is correct, you will move on to the next round.\n" +
+                        "\nTry to pump your streak as high as possible!")
+                   },
+            confirmButton = {
+                Button(onClick = {dialogEnabled.value = false})
+                {Text(text = "Exit")}
+            }
+        )
+    }
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.align(Alignment.Center),
@@ -110,7 +125,7 @@ fun MainMenuScreen(
             Button(onClick = onLogoutClick) {
                 Text(text = "Logout")
             }
-            Button(onClick = onHelpClick) {
+            Button(onClick = {dialogEnabled.value = true}) {
                 Text(text = "Help")
             }
         }
