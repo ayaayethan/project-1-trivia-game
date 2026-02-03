@@ -20,7 +20,8 @@ class GamesViewModel : ViewModel() {
     fun fetchGames() {
         viewModelScope.launch {
             try {
-                val page : Int = Random.nextInt(1,35001)
+                // generates a random page from APIs
+                val page : Int = Random.nextInt(1,465)
                 val apiKey : String = BuildConfig.API_KEY
 
                 val response = RetrofitInstance.api.getGames(
