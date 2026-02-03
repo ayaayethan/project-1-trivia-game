@@ -87,7 +87,7 @@ fun MainMenuScreen(
             title = { Text(text = "Welcome to Game Diff!")},
             text = {
                 Text(text = "Select which game you think is rated higher! " +
-                        "If your guess is correct, you will move on to the next round.\n" +
+                        "If your guess is correct, you will move on to the next round and receive a point.\n" +
                         "\nTry to pump your streak as high as possible!")
                    },
             confirmButton = {
