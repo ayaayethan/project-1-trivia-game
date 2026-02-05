@@ -19,6 +19,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import retrofit2.Response
@@ -26,25 +27,56 @@ import kotlin.random.Random
 
 class GamesViewModelTest {
 
-    // Makes LiveData work in unit tests
+    // makes LiveData work in unit tests
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    // Fakes the Android main thread
+    // fakes the Android main thread
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
+    private lateinit var mockApi: ApiInterface
+
+    @Before
+    fun setUp() {
+        mockkObject(RetrofitInstance)
+        mockApi = mockk()
+        every { RetrofitInstance.api } returns mockApi
+    }
+
+    @After
+    fun tearDown() {
+        unmockkAll()
+    }
+
     @Test
     fun `fetchGames gets 10 games`() = runTest {
-        mockkObject(RetrofitInstance)
+        val games = List(10) { mockk<Game>() }
 
-        val mockApi = mockk<ApiInterface>()
-            every { RetrofitInstance.api } returns mockApi
+        coEvery {
+            mockApi.getGames(
+                key = any(),
+                page = any(),
+                page_size = 10,
+                metacritic = any()
+            )
+        } returns Response.success(GameList(results = games))
 
-        val tenGames = List(10) { mockk<Game>() }
+        val viewmodel = GamesViewModel()
+        viewmodel.fetchGames()
+        advanceUntilIdle()
 
-        val fakeResponse = GameList (
-            results = tenGames
+        assertEquals(10, viewmodel.games.value?.size)
+    }
+
+    @Test
+    fun `fetchGames contains the appropriate fields`() = runTest {
+        val game = Game(
+            id = 123,
+            name = "Expedition 33",
+            released = "2001-11-15",
+            metacritic = 97,
+            background_image = "https://example.com/image.jpg"
         )
 
         coEvery {
@@ -54,13 +86,18 @@ class GamesViewModelTest {
                 page_size = 10,
                 metacritic = any()
             )
-        } returns Response.success(fakeResponse)
+        } returns Response.success(GameList(results = listOf(game)))
 
-        val viewModel = GamesViewModel()
-
-        viewModel.fetchGames()
+        val viewmodel = GamesViewModel()
+        viewmodel.fetchGames()
         advanceUntilIdle()
 
-        assertEquals(10, viewModel.games.value?.size)
+        val first = viewmodel.games.value!!.first()
+
+        assertEquals(123, first.id)
+        assertEquals("Expedition 33", first.name)
+        assertEquals("2001-11-15", first.released)
+        assertEquals(97, first.metacritic)
+        assertEquals("https://example.com/image.jpg", first.background_image)
     }
 }
