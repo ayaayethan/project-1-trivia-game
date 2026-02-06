@@ -15,9 +15,10 @@ import kotlinx.coroutines.Dispatchers
 
 class GamesViewModel : ViewModel() {
     private val _games = MutableLiveData<List<Game>>()
-    val games : LiveData<List<Game>> = _games
+    val games : LiveData<ArrayDeque<Game>> = _games
 
-    fun fetchGames() {
+    // Loads 10 games into the queue
+    private fun fetchGames() {
         viewModelScope.launch {
             try {
                 // generates a random page from APIs
@@ -59,4 +60,20 @@ class GamesViewModel : ViewModel() {
             Log.d("API DEBUG", response.body()?.results.toString())
         }
     }
+
+    // Pulls two games from the front of the queue and returns them
+    fun stageGames() {
+        // if list of games is less than or equal to 2, fetch 10 more games
+
+        // dequeue front 2 games from queue and set a public stage variable containing two games
+    }
+
+    // Pass in the incorrect gameId, swap it with a new one. Updates stage
+    fun swapGame() {
+
+    }
+
+
+
+
 }
