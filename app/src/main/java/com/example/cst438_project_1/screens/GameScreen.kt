@@ -66,6 +66,7 @@ fun GameScreen(
     }
 
     val retryGame: () -> Unit = {
+        gamesViewModel.startGame()
         gameOver = false
         score = 0
     }
@@ -86,18 +87,7 @@ fun GameScreen(
         Text("Game Screen Placeholder")
         Text("Score: $score")
         Spacer(modifier = Modifier.height(24.dp))
-//        Button(
-//            onClick = updateScore,
-//            enabled = !gameOver
-//        ) {
-//            Text(text = "Update Score")
-//        }
-//        Button(
-//            onClick = wrongAnswer,
-//            enabled = !gameOver
-//        ) {
-//            Text(text = "Wrong Answer")
-//        }
+
         GameCard(
             game = top,
             onClick = { guess(0) }

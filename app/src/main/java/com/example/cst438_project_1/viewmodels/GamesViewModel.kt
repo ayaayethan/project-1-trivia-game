@@ -71,7 +71,10 @@ class GamesViewModel : ViewModel() {
      */
     fun startGame() {
         viewModelScope.launch {
-            fetchGames();
+            if (queue.size <= 2) {
+                fetchGames();
+            }
+
             _stage.value = Stage(
                 queue.removeFirst(),
                 queue.removeFirst()
