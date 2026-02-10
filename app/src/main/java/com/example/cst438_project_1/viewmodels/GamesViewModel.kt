@@ -13,11 +13,15 @@ import kotlin.random.nextInt
 import com.example.cst438_project_1.BuildConfig
 import kotlinx.coroutines.Dispatchers
 
+data class Stage(val top: Game, val bot: Game)
 class GamesViewModel : ViewModel() {
-    private val _games = MutableLiveData<List<Game>>()
-    val games : LiveData<ArrayDeque<Game>> = _games
+    private val queue = ArrayDeque<Game>()
+    private val _stage = MutableLiveData<Stage>()
+    val stage: LiveData<Stage> = _stage
 
-    // Loads 10 games into the queue
+    /**
+     * Loads 10 games into the queue
+     */
     private fun fetchGames() {
         viewModelScope.launch {
             try {
@@ -34,7 +38,8 @@ class GamesViewModel : ViewModel() {
 
                 if (response.isSuccessful) {
                     // TODO: Shuffle games inside the response
-                    _games.value = response.body()?.results ?: emptyList()
+                    val gameList = response.body()?.results ?: emptyList()
+                    queue.addAll(gameList);
                 } else {
                     Log.e("API", "Error: ${response.code()}")
                 }
@@ -45,7 +50,9 @@ class GamesViewModel : ViewModel() {
         }
     }
 
-    // Simple function to log games from the API
+    /**
+     * Simple function to log games from the API
+     */
     fun debugFetchGames() {
         viewModelScope.launch(Dispatchers.IO) {
             val apiKey : String = BuildConfig.API_KEY
@@ -61,19 +68,48 @@ class GamesViewModel : ViewModel() {
         }
     }
 
-    // Pulls two games from the front of the queue and returns them
-    fun stageGames() {
-        // if list of games is less than or equal to 2, fetch 10 more games
-
-        // dequeue front 2 games from queue and set a public stage variable containing two games
+    /**
+     * Initializes stage with two random games.
+     */
+    fun startGame() {
+        _stage.value = Stage(
+            queue.removeFirst(),
+            queue.removeFirst()
+        );
     }
 
-    // Pass in the incorrect gameId, swap it with a new one. Updates stage
-    fun swapGame() {
+    /**
+     * Determines whether the player's guess is correct.
+     *
+     * @param choice `0` if user selected top game. `1` if user selected bottom game.
+     * @return `true` if the player's guess was correct and swaps out lower game, `false` otherwise
+     */
+    fun makeGuess(choice: Int): Boolean {
+        val stage = _stage.value ?: return false // return if _stage is not initialized
 
+        if (choice == 0) { // user chose top game
+            if (stage.top.metacritic >= stage.bot.metacritic) {
+                swapGame(1);
+                return true;
+            } else {
+                return false;
+            }
+        } else { // user chose bottom game
+            if (stage.bot.metacritic >= stage.top.metacritic) {
+                swapGame(0);
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
+    /**
+     * Swaps out the game with the lower rating from the stage
+     *
+     * @param gameToSwap the game we need to swap
+     */
+    private fun swapGame(gameToSwap: Int) {
 
-
-
+    }
 }
