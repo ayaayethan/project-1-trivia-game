@@ -31,15 +31,13 @@ fun MainMenuScreen(
                     onDismissRequest = { showHelpDialog = false },
                     title = { Text(text = "HOW TO PLAY", fontWeight = FontWeight.Bold) },
                     text = {
-                        Text(
-                            text = "Select which game you think is rated higher! " +
-                                    "Correct guesses increase your streak. See how high you can go!",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        Text(text = "Select which game you think is rated higher! " +
+                                "If your guess is correct, you will move on to the next round and receive a point.\n" +
+                                "\nTry to pump your streak as high as possible!")
                     },
                     confirmButton = {
                         TextButton(onClick = { showHelpDialog = false }) {
-                            Text("GOT IT")
+                            Text("Exit")
                         }
                     }
                 )
