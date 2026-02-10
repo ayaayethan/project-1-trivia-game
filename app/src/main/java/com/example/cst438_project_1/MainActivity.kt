@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
         }
 
         // logs game data from API for debugging
-         viewModel.debugFetchGames()
+        // viewModel.debugFetchGames()
     }
 
     private fun onSuccessfulAuth() {
