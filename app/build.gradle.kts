@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation ("androidx.room:room-runtime:2.7.0")
     implementation ("androidx.room:room-ktx:2.7.0")
+    implementation(libs.androidx.compose.runtime.livedata)
     ksp ("androidx.room:room-compiler:2.7.0")
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -73,8 +74,10 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation("io.coil-kt:coil-compose:2.7.0")
     // retrofit
     implementation(libs.retrofit)
+
     // gson converter
     implementation(libs.converter.gson)
     testImplementation(libs.androidx.core.testing)
