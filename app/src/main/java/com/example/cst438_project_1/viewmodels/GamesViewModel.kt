@@ -22,31 +22,29 @@ class GamesViewModel : ViewModel() {
     /**
      * Loads 10 games into the queue
      */
-    private fun fetchGames() {
-        viewModelScope.launch {
-            try {
-                // generates a random page from APIs
-                val page : Int = Random.nextInt(1,465)
-                val apiKey : String = BuildConfig.API_KEY
+    private suspend fun fetchGames() {
+        try {
+            // generates a random page from APIs
+            val page : Int = Random.nextInt(1,465)
+            val apiKey : String = BuildConfig.API_KEY
 
-                val response = RetrofitInstance.api.getGames(
-                    key = apiKey,
-                    page = page, // random integer for page sizes
-                    page_size = 10,
-                    metacritic = "70,100"
-                )
+            val response = RetrofitInstance.api.getGames(
+                key = apiKey,
+                page = page, // random integer for page sizes
+                page_size = 10,
+                metacritic = "70,100"
+            )
 
-                if (response.isSuccessful) {
-                    // TODO: Shuffle games inside the response
-                    val gameList = response.body()?.results ?: emptyList()
-                    queue.addAll(gameList);
-                } else {
-                    Log.e("API", "Error: ${response.code()}")
-                }
-
-            } catch (e: Exception){
-                Log.e("API: ", "Exception: ${e.message}")
+            if (response.isSuccessful) {
+                // TODO: Shuffle games inside the response
+                val gameList = response.body()?.results ?: emptyList()
+                queue.addAll(gameList);
+            } else {
+                Log.e("API", "Error: ${response.code()}")
             }
+
+        } catch (e: Exception) {
+            Log.e("API: ", "Exception: ${e.message}")
         }
     }
 
@@ -72,10 +70,13 @@ class GamesViewModel : ViewModel() {
      * Initializes stage with two random games.
      */
     fun startGame() {
-        _stage.value = Stage(
-            queue.removeFirst(),
-            queue.removeFirst()
-        );
+        viewModelScope.launch {
+            fetchGames();
+            _stage.value = Stage(
+                queue.removeFirst(),
+                queue.removeFirst()
+            );
+        }
     }
 
     /**
@@ -110,19 +111,21 @@ class GamesViewModel : ViewModel() {
      * @param gameToSwap the game we need to swap
      */
     private fun swapGame(gameToSwap: Int) {
-        val stage = _stage.value ?: return;
+        viewModelScope.launch {
+            val stage = _stage.value ?: return@launch;
 
-        val  newStage = if (gameToSwap == 0) { // swap the top game
-            Stage(queue.removeFirst(), stage.bot);
-        } else { // swap the bottom game
-            Stage(stage.top, queue.removeFirst());
-        }
+            val  newStage = if (gameToSwap == 0) { // swap the top game
+                Stage(queue.removeFirst(), stage.bot);
+            } else { // swap the bottom game
+                Stage(stage.top, queue.removeFirst());
+            }
 
-        _stage.value = newStage;
+            _stage.value = newStage;
 
-        // reload queue if it's running low
-        if (queue.size <= 2) {
-            fetchGames();
+            // reload queue if it's running low
+            if (queue.size <= 2) {
+                fetchGames();
+            }
         }
     }
 }
