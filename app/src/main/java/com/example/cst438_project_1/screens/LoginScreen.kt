@@ -1,31 +1,20 @@
 package com.example.cst438_project_1.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cst438_project_1.ui.theme.Cst438project1Theme
+import androidx.compose.ui.unit.sp
+import com.example.cst438_project_1.ui.components.GameButton
+import com.example.cst438_project_1.ui.components.GameTextField
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier,
     errorMessage: String? = null,
     onLoginClick: (String, String) -> Unit,
     onSignUpClick: () -> Unit
@@ -33,45 +22,61 @@ fun LoginScreen(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Login", style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-        errorMessage?.let {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = it, color = MaterialTheme.colorScheme.error)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { onLoginClick(username, password) }) {
-            Text(text = "Login")
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onSignUpClick) {
-            Text(text = "Sign Up")
-        }
-    }
-}
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Branding Section
+            Text(
+                text = "GAME DIFF",
+                style = MaterialTheme.typography.displayMedium.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.primary,
+                    letterSpacing = 4.sp
+                )
+            )
+            Text(
+                text = "Show your gaming IQ",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+            )
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    Cst438project1Theme {
-        LoginScreen(onLoginClick = { _, _ -> }, onSignUpClick = {})
+            Spacer(modifier = Modifier.height(48.dp))
+
+            // Input Section
+            GameTextField(
+                value = username,
+                onValueChange = { username = it },
+                label = "Username"
+            )
+
+            GameTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = "Password",
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Password)
+            )
+
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Action Section
+            GameButton(text = "Login", onClick = { onLoginClick(username, password) })
+
+            TextButton(onClick = onSignUpClick, modifier = Modifier.padding(top = 16.dp)) {
+                Text("New player? Create an account")
+            }
+        }
     }
 }
