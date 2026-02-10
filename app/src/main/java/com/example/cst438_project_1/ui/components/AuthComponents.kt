@@ -6,13 +6,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// A custom styled text field for a gaming look
 @Composable
 fun GameTextField(
     value: String,
@@ -25,42 +23,45 @@ fun GameTextField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(label) },
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        shape = RoundedCornerShape(12.dp),
+        label = { Text(text = label, style = MaterialTheme.typography.bodyMedium) },
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        shape = RoundedCornerShape(16.dp),
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         isError = isError,
+        singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = Color.Gray.copy(alpha = 0.5f)
+            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
+            cursorColor = MaterialTheme.colorScheme.primary
         )
     )
 }
 
-// A bold, high-contrast button
 @Composable
 fun GameButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.primary
+    isLoading: Boolean = false
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = containerColor),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+        modifier = modifier.fillMaxWidth().height(56.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
+        enabled = !isLoading
     ) {
-        Text(
-            text = text.uppercase(),
-            style = MaterialTheme.typography.labelLarge.copy(
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 1.2.sp
+        if (isLoading) {
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(24.dp))
+        } else {
+            Text(
+                text = text.uppercase(),
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 2.sp
+                )
             )
-        )
+        }
     }
 }
