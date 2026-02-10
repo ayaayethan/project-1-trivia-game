@@ -110,6 +110,19 @@ class GamesViewModel : ViewModel() {
      * @param gameToSwap the game we need to swap
      */
     private fun swapGame(gameToSwap: Int) {
+        val stage = _stage.value ?: return;
 
+        val  newStage = if (gameToSwap == 0) { // swap the top game
+            Stage(queue.removeFirst(), stage.bot);
+        } else { // swap the bottom game
+            Stage(stage.top, queue.removeFirst());
+        }
+
+        _stage.value = newStage;
+
+        // reload queue if it's running low
+        if (queue.size <= 2) {
+            fetchGames();
+        }
     }
 }
