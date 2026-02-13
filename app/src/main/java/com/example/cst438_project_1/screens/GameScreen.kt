@@ -29,22 +29,44 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cst438_project_1.API.DataClass.Game
 import com.example.cst438_project_1.ui.theme.Cst438project1Theme
 import com.example.cst438_project_1.viewmodels.GamesViewModel
+import androidx.compose.ui.platform.LocalContext
+import com.example.cst438_project_1.data.db.AppDatabase
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filterNotNull
+import androidx.compose.runtime.collectAsState
+import androidx.compose.foundation.layout.Box
 
 
 @Composable
 fun GameScreen(
+    userId: Long,
     modifier: Modifier = Modifier,
     onQuitClick: () -> Unit = {},
     gamesViewModel: GamesViewModel = viewModel()
 ) {
     var score by remember { mutableIntStateOf(0) }
     var gameOver by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val db = remember { AppDatabase.get(context) }
+    val userDao = remember { db.userDao() }
+
+    val bestScore by userDao
+        .observeBestScore(userId)
+        .map { it ?: 0 }
+        .collectAsState(initial = 0)
+
+
 
     // observer for stage. will update automatically when a game is swapped
     val stage by gamesViewModel.stage.observeAsState()
 
     LaunchedEffect(Unit) {
         gamesViewModel.startGame()
+    }
+    LaunchedEffect(gameOver) {
+        if (gameOver) {
+            db.userDao().saveBestScoreIfHigher(userId, score)
+        }
     }
 
     if (stage == null || stage!!.top == null || stage!!.bot == null ) {
@@ -78,35 +100,45 @@ fun GameScreen(
             gameOver = true
         }
     }
+    Box(modifier = modifier.fillMaxSize()) {
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Game Screen Placeholder")
-        Text("Score: $score")
-        Spacer(modifier = Modifier.height(24.dp))
 
-        GameCard(
-            game = top!!,
-            onClick = { guess(0) }
-        )
-        GameCard(
-            game = bottom!!,
-            onClick = { guess(1) }
+        Text(
+            text = "Best Streak: $bestScore",
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(16.dp)
         )
 
-        Button(
-            onClick = retryGame,
-            modifier = Modifier.alpha(if (gameOver) 1f else 0f),
-            enabled = gameOver
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Retry Game")
-        }
+            Text("Game Screen Placeholder")
+            Text("Score: $score")
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Button(onClick = onQuitClick) {
-            Text(text = "Quit")
+            GameCard(
+                game = top!!,
+                onClick = { guess(0) }
+            )
+            GameCard(
+                game = bottom!!,
+                onClick = { guess(1) }
+            )
+
+            Button(
+                onClick = retryGame,
+                modifier = Modifier.alpha(if (gameOver) 1f else 0f),
+                enabled = gameOver
+            ) {
+                Text(text = "Retry Game")
+            }
+
+            Button(onClick = onQuitClick) {
+                Text(text = "Quit")
+            }
         }
     }
 }
@@ -153,6 +185,6 @@ fun GameCard(
 @Composable
 fun GameScreenPreview() {
     Cst438project1Theme {
-        GameScreen()
+        GameScreen(userId = 1L)
     }
 }

@@ -9,7 +9,7 @@ import com.example.cst438_project_1.screens.MainMenuScreen
 
 
 @Composable
-fun AppNavigation(onLogout: () -> Unit) {
+fun AppNavigation(userId: Long, onLogout: () -> Unit) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "main_menu") {
         composable("main_menu") {
@@ -19,7 +19,9 @@ fun AppNavigation(onLogout: () -> Unit) {
             )
         }
         composable("game_screen") {
-            GameScreen(onQuitClick = { navController.popBackStack() })
+            GameScreen(
+                userId = userId,
+                onQuitClick = { navController.popBackStack() })
         }
     }
 }
