@@ -11,6 +11,7 @@ interface ApiInterface {
         @Query("key") key : String,
         @Query("page") page : Int,
         @Query("page_size") page_size : Int,
-        @Query("metacritic") metacritic : String
+        @Query("metacritic") metacritic : String,
+        @Query("platforms") platforms : String
         ) : Response<GameList>
 }

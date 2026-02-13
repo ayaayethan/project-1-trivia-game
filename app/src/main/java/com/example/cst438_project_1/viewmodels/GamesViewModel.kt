@@ -13,7 +13,7 @@ import kotlin.random.nextInt
 import com.example.cst438_project_1.BuildConfig
 import kotlinx.coroutines.Dispatchers
 
-data class Stage(val top: Game, val bot: Game)
+data class Stage(val top: Game?, val bot: Game?)
 class GamesViewModel : ViewModel() {
     private val queue = ArrayDeque<Game>()
     private val _stage = MutableLiveData<Stage>()
@@ -25,14 +25,15 @@ class GamesViewModel : ViewModel() {
     private suspend fun fetchGames() {
         try {
             // generates a random page from APIs
-            val page : Int = Random.nextInt(1,465)
+            val page : Int = Random.nextInt(1,101)
             val apiKey : String = BuildConfig.API_KEY
 
             val response = RetrofitInstance.api.getGames(
                 key = apiKey,
                 page = page, // random integer for page sizes
                 page_size = 10,
-                metacritic = "70,100"
+                metacritic = "70,100",
+                platforms = "4,187,1,18,186,7,14,16"
             )
 
             if (response.isSuccessful) {
@@ -59,7 +60,8 @@ class GamesViewModel : ViewModel() {
                 key = apiKey,
                 page = 1,
                 page_size = 10,
-                metacritic = "70,100"
+                metacritic = "70,100",
+                platforms = "4,187,1,18,186,7,14,16"
             )
 
             Log.d("API DEBUG", response.body()?.results.toString())
@@ -92,15 +94,27 @@ class GamesViewModel : ViewModel() {
         val stage = _stage.value ?: return false // return if _stage is not initialized
 
         if (choice == 0) { // user chose top game
-            if (stage.top.metacritic >= stage.bot.metacritic) {
-                swapGame(1);
+            if (stage.top!!.metacritic >= stage.bot!!.metacritic) {
+                // if top game has been guessed already, swap it
+                if (stage.top.guessed) {
+                    swapGame(0);
+                } else { // else swap bottom game
+                    swapGame(1);
+                    markAsGuessed(0); // mark top game as guessed
+                }
                 return true;
             } else {
                 return false;
             }
         } else { // user chose bottom game
-            if (stage.bot.metacritic >= stage.top.metacritic) {
-                swapGame(0);
+            if (stage.bot!!.metacritic >= stage.top!!.metacritic) {
+                // if bottom game has already been guessed, swap the bottom game
+                if (stage.bot.guessed) {
+                    swapGame(1);
+                } else { // otherwise, swap top game
+                    swapGame(0);
+                    markAsGuessed(1); // mark bottom game as guessed
+                }
                 return true;
             } else {
                 return false;
@@ -118,9 +132,9 @@ class GamesViewModel : ViewModel() {
             val stage = _stage.value ?: return@launch;
 
             val  newStage = if (gameToSwap == 0) { // swap the top game
-                Stage(queue.removeFirst(), stage.bot);
+                Stage(queue.removeFirstOrNull(), stage.bot);
             } else { // swap the bottom game
-                Stage(stage.top, queue.removeFirst());
+                Stage(stage.top, queue.removeFirstOrNull());
             }
 
             _stage.value = newStage;
@@ -129,6 +143,27 @@ class GamesViewModel : ViewModel() {
             if (queue.size <= 2) {
                 fetchGames();
             }
+        }
+    }
+
+    /**
+     * Marks a game as guessed
+     *
+     * @param gameToMark Game to mark as guessed. `0` for top `1` for bottom
+     */
+    private fun markAsGuessed(gameToMark: Int) {
+        val currentStage = _stage.value ?: return
+
+        _stage.value = when (gameToMark) {
+            0 -> {
+                val top = currentStage.top ?: return
+                currentStage.copy(top = top.copy(guessed = true))
+            }
+            1 -> {
+                val bot = currentStage.bot ?: return
+                currentStage.copy(bot = bot.copy(guessed = true))
+            }
+            else -> return
         }
     }
 }
