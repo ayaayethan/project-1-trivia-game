@@ -13,7 +13,7 @@ import kotlin.random.nextInt
 import com.example.cst438_project_1.BuildConfig
 import kotlinx.coroutines.Dispatchers
 
-data class Stage(val top: Game, val bot: Game)
+data class Stage(val top: Game?, val bot: Game?)
 class GamesViewModel : ViewModel() {
     private val queue = ArrayDeque<Game>()
     private val _stage = MutableLiveData<Stage>()
@@ -92,14 +92,14 @@ class GamesViewModel : ViewModel() {
         val stage = _stage.value ?: return false // return if _stage is not initialized
 
         if (choice == 0) { // user chose top game
-            if (stage.top.metacritic >= stage.bot.metacritic) {
+            if (stage.top!!.metacritic >= stage.bot!!.metacritic) {
                 swapGame(1);
                 return true;
             } else {
                 return false;
             }
         } else { // user chose bottom game
-            if (stage.bot.metacritic >= stage.top.metacritic) {
+            if (stage.bot!!.metacritic >= stage.top!!.metacritic) {
                 swapGame(0);
                 return true;
             } else {
@@ -118,9 +118,9 @@ class GamesViewModel : ViewModel() {
             val stage = _stage.value ?: return@launch;
 
             val  newStage = if (gameToSwap == 0) { // swap the top game
-                Stage(queue.removeFirst(), stage.bot);
+                Stage(queue.removeFirstOrNull(), stage.bot);
             } else { // swap the bottom game
-                Stage(stage.top, queue.removeFirst());
+                Stage(stage.top, queue.removeFirstOrNull());
             }
 
             _stage.value = newStage;

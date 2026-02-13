@@ -47,13 +47,10 @@ fun GameScreen(
         gamesViewModel.startGame()
     }
 
-    if (stage == null) {
+    if (stage == null || stage!!.top == null || stage!!.bot == null ) {
         Text("Loading...")
         return
     }
-
-    val top = stage!!.top // top game
-    val bottom = stage!!.bot // bottom game
 
     val updateScore: () -> Unit = {
         if(!gameOver) {
@@ -89,11 +86,11 @@ fun GameScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         GameCard(
-            game = top,
+            game = top!!,
             onClick = { guess(0) }
         )
         GameCard(
-            game = bottom,
+            game = bottom!!,
             onClick = { guess(1) }
         )
 
