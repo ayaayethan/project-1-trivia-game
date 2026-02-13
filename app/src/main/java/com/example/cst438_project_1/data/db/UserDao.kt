@@ -28,8 +28,8 @@ interface UserDao {
 
     @Query("""
     UPDATE users 
-    SET bestScore = :score
+    SET bestScore = MAX(bestScore, :score)
     WHERE id = :id AND :score > bestScore
     """)
-    suspend fun updateBestScoreIfHigher(id: Long, score: Int): Int
+    suspend fun saveBestScoreIfHigher(id: Long, score: Int): Int
 }

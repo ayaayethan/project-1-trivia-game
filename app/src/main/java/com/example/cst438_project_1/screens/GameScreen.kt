@@ -65,7 +65,7 @@ fun GameScreen(
     }
     LaunchedEffect(gameOver) {
         if (gameOver) {
-            db.userDao().updateBestScoreIfHigher(userId, score)
+            db.userDao().saveBestScoreIfHigher(userId, score)
         }
     }
 
