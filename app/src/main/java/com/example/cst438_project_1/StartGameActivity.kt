@@ -27,6 +27,14 @@ class StartGameActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val userId = intent.getLongExtra(EXTRA_USER_ID, -1)
+        if (userId == 0L) {
+            finish()
+            return
+        }
+
+
         setContent {
             Cst438project1Theme {
                 Surface(
