@@ -18,5 +18,6 @@ data class UserEntity(
 
     val createdAt: Long = System.currentTimeMillis(),
     val highestStreak: Int = 0,
-    val currentStreak: Int = 0
+    val currentStreak: Int = 0,
+    val bestScore: Int = 0
 )

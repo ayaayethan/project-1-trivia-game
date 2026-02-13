@@ -5,6 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface UserDao {
@@ -20,4 +22,14 @@ interface UserDao {
 
     @Update
     suspend fun update(user: UserEntity): Int
+
+    @Query("SELECT bestScore FROM users WHERE id = :id LIMIT 1")
+    fun observeBestScore(id: Long): Flow<Int?>
+
+    @Query("""
+    UPDATE users 
+    SET bestScore = :score
+    WHERE id = :id AND :score > bestScore
+""")
+    suspend fun updateBestScoreIfHigher(id: Long, score: Int): Int
 }
