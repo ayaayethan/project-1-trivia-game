@@ -93,14 +93,26 @@ class GamesViewModel : ViewModel() {
 
         if (choice == 0) { // user chose top game
             if (stage.top!!.metacritic >= stage.bot!!.metacritic) {
-                swapGame(1);
+                // if top game has been guessed already, swap it
+                if (stage.top.guessed) {
+                    swapGame(0);
+                } else { // else swap bottom game
+                    swapGame(1);
+                    markAsGuessed(0); // mark top game as guessed
+                }
                 return true;
             } else {
                 return false;
             }
         } else { // user chose bottom game
             if (stage.bot!!.metacritic >= stage.top!!.metacritic) {
-                swapGame(0);
+                // if bottom game has already been guessed, swap the bottom game
+                if (stage.bot.guessed) {
+                    swapGame(1);
+                } else { // otherwise, swap top game
+                    swapGame(0);
+                    markAsGuessed(1); // mark bottom game as guessed
+                }
                 return true;
             } else {
                 return false;
@@ -129,6 +141,27 @@ class GamesViewModel : ViewModel() {
             if (queue.size <= 2) {
                 fetchGames();
             }
+        }
+    }
+
+    /**
+     * Marks a game as guessed
+     *
+     * @param gameToMark Game to mark as guessed. `0` for top `1` for bottom
+     */
+    private fun markAsGuessed(gameToMark: Int) {
+        val currentStage = _stage.value ?: return
+
+        _stage.value = when (gameToMark) {
+            0 -> {
+                val top = currentStage.top ?: return
+                currentStage.copy(top = top.copy(guessed = true))
+            }
+            1 -> {
+                val bot = currentStage.bot ?: return
+                currentStage.copy(bot = bot.copy(guessed = true))
+            }
+            else -> return
         }
     }
 }

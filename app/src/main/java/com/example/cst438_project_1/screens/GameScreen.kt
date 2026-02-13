@@ -52,6 +52,9 @@ fun GameScreen(
         return
     }
 
+    val top = stage!!.top // top game
+    val bottom = stage!!.bot // bottom game
+
     val updateScore: () -> Unit = {
         if(!gameOver) {
             score++
