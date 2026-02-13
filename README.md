@@ -1,4 +1,4 @@
-# Project 1 – Trivia Game (Android)
+# Project 1 – GameDiff
 
 An Android trivia-style game where you compare two game cards and try to keep your streak going. The app includes user accounts and saves your **best score (high score)** locally using **Room** so your top score persists across app restarts.
 
@@ -61,6 +61,5 @@ An Android trivia-style game where you compare two game cards and try to keep yo
 - **Jetpack Compose** (UI)
 - **Room** (local database for users + bestScore)
 - **MVVM** (ViewModel manages game state)
-- (Optional depending on your project) API calls to fetch game data/cards
 
 ---
