@@ -1,4 +1,4 @@
-# Project 1 – GameDiff
+# GameDiff
 
 An Android trivia-style game where you compare two game cards and try to keep your streak going. The app includes user accounts and saves your **best score (high score)** locally using **Room** so your top score persists across app restarts.
 
@@ -6,7 +6,7 @@ An Android trivia-style game where you compare two game cards and try to keep yo
 
 ## What the app does
 
-### ✅ Core gameplay
+### Core gameplay
 - The app shows **two game cards** (top and bottom).
 - You make a guess by tapping one of the cards (based on the rule shown in the game screen).
 - If your guess is correct:
@@ -16,7 +16,7 @@ An Android trivia-style game where you compare two game cards and try to keep yo
   - The game ends (**Game Over**)
   - You can retry or quit
 
-### ✅ Accounts + saved high score
+### Accounts and saved high scores
 - Users can **create an account** (sign up) and **log in**
 - The app stores each user's **best score** in a local database using **Room**
 - Only the **highest score ever achieved** is saved
@@ -48,7 +48,7 @@ An Android trivia-style game where you compare two game cards and try to keep yo
 - **Retry** starts a new run (score resets to 0)
 - **Quit** returns you to the main menu
 
-### 5) High score behavior (important)
+### 5) High score behavior
 - Your best score saves automatically when the game ends
 - It persists even after closing/restarting the app
 - Only a higher score overwrites the previous best score
@@ -60,6 +60,7 @@ An Android trivia-style game where you compare two game cards and try to keep yo
 - **Kotlin**
 - **Jetpack Compose** (UI)
 - **Room** (local database for users + bestScore)
+- **RetroFit** (Used to make interactions with RAWG API)
 - **MVVM** (ViewModel manages game state)
 
 ---
