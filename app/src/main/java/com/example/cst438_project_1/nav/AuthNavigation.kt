@@ -19,6 +19,7 @@ private fun onSuccessfulAuth(context: Context) {
     val intent = Intent(context, StartGameActivity::class.java).apply {
         // Clear activity stack so user can't "back" into login after successful auth
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        putExtra(StartGameActivity.EXTRA_USER_ID, userId)
     }
     context.startActivity(intent)
 }
@@ -49,7 +50,7 @@ fun AuthNavigation() {
                         scope.launch {
                             val res = authRepo.login(username, password)
                             if (res.isSuccess) {
-                                onSuccessfulAuth(context)
+                                onSuccessfulAuth(context, res.getOrThrow().id)
                             } else {
                                 loginError = res.exceptionOrNull()?.message ?: "Login failed"
                             }
@@ -73,7 +74,7 @@ fun AuthNavigation() {
                             scope.launch {
                                 val res = authRepo.createAccount(username, password)
                                 if (res.isSuccess) {
-                                    onSuccessfulAuth(context)
+                                    onSuccessfulAuth(context, res.getOrThrow())
                                 } else {
                                     signUpError = res.exceptionOrNull()?.message ?: "Sign up failed"
                                 }
