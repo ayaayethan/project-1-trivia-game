@@ -25,14 +25,15 @@ class GamesViewModel : ViewModel() {
     private suspend fun fetchGames() {
         try {
             // generates a random page from APIs
-            val page : Int = Random.nextInt(1,465)
+            val page : Int = Random.nextInt(1,101)
             val apiKey : String = BuildConfig.API_KEY
 
             val response = RetrofitInstance.api.getGames(
                 key = apiKey,
                 page = page, // random integer for page sizes
                 page_size = 10,
-                metacritic = "70,100"
+                metacritic = "70,100",
+                platforms = "4,187,1,18,186,7,14,16"
             )
 
             if (response.isSuccessful) {
@@ -59,7 +60,8 @@ class GamesViewModel : ViewModel() {
                 key = apiKey,
                 page = 1,
                 page_size = 10,
-                metacritic = "70,100"
+                metacritic = "70,100",
+                platforms = "4,187,1,18,186,7,14,16"
             )
 
             Log.d("API DEBUG", response.body()?.results.toString())
