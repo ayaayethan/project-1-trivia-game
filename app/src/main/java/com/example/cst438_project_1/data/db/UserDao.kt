@@ -30,6 +30,6 @@ interface UserDao {
     UPDATE users 
     SET bestScore = :score
     WHERE id = :id AND :score > bestScore
-""")
+    """)
     suspend fun updateBestScoreIfHigher(id: Long, score: Int): Int
 }

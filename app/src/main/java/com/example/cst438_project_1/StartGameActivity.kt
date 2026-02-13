@@ -41,7 +41,7 @@ class StartGameActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavigation(onLogout = { onLogout() })
+                    AppNavigation(userId = userId, onLogout = { onLogout() })
                 }
             }
         }
@@ -51,5 +51,8 @@ class StartGameActivity : ComponentActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
+    }
+    companion object {
+        const val EXTRA_USER_ID = "extra_user_id"
     }
 }

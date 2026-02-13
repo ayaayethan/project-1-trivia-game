@@ -15,15 +15,13 @@ import com.example.cst438_project_1.screens.SignUpScreen
 import com.example.cst438_project_1.ui.theme.gametheme // Matches your filename
 import kotlinx.coroutines.launch
 
-private fun onSuccessfulAuth(context: Context) {
+private fun onSuccessfulAuth(context: Context, userId: Long) {
     val intent = Intent(context, StartGameActivity::class.java).apply {
-        // Clear activity stack so user can't "back" into login after successful auth
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         putExtra(StartGameActivity.EXTRA_USER_ID, userId)
     }
     context.startActivity(intent)
 }
-
 @Composable
 fun AuthNavigation() {
     val navController = rememberNavController()
