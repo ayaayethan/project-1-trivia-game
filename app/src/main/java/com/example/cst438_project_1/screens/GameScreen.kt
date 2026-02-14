@@ -42,6 +42,11 @@ import com.example.cst438_project_1.ui.theme.CyberPurple
 import com.example.cst438_project_1.ui.theme.ElectricBlue
 import com.example.cst438_project_1.ui.theme.PurpleGrey40
 import com.example.cst438_project_1.ui.theme.gametheme
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 
 
 @Composable
@@ -60,6 +65,8 @@ fun GameScreen(
     var showRatings by remember { mutableStateOf(false) }
     var boxOneColor by remember {mutableStateOf(PurpleGrey40)}
     var boxTwoColor by remember {mutableStateOf(PurpleGrey40)}
+    var topCardVisible by remember { mutableStateOf(true) }
+    var bottomCardVisible by remember { mutableStateOf(true) }
 
     val bestScore by userDao
         .observeBestScore(userId)
@@ -90,8 +97,16 @@ fun GameScreen(
             } else {
                 boxTwoColor = androidx.compose.ui.graphics.Color.Green
             }
-            kotlinx.coroutines.delay(1500)
+            kotlinx.coroutines.delay(1000)
+            if (selectedGame == 0) {
+                bottomCardVisible = false
+            } else {
+                topCardVisible = false
+            }
+            kotlinx.coroutines.delay(500)
             gamesViewModel.advanceRound(selectedGame!!)
+            topCardVisible = true
+            bottomCardVisible = true
             showRatings = false
             boxOneColor = PurpleGrey40
             boxTwoColor = PurpleGrey40
@@ -155,7 +170,6 @@ fun GameScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-//                Text("Game Screen Placeholder")
                     Text(
                         text = "SCORE: $score",
                         color = ElectricBlue,
@@ -164,33 +178,46 @@ fun GameScreen(
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(24.dp))
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = boxOneColor,
-                                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
-                            )
+                    AnimatedVisibility(
+                        visible = topCardVisible,
+                        enter = slideInHorizontally { -it },
+                        exit = slideOutHorizontally { -it }
                     ) {
-                        GameCard(
-                            game = top!!,
-                            showRating = showRatings || top.guessed,
-                            onClick = { guess(0) }
-                        )
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = boxOneColor,
+                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                                )
+                                .padding(2.dp)
+                        ) {
+                            GameCard(
+                                game = top!!,
+                                showRating = showRatings || top.guessed,
+                                onClick = { guess(0) }
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.height(4.dp))
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = boxTwoColor,
-                                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
-                            )
-                            .padding(2.dp)
+                    AnimatedVisibility(
+                        visible = bottomCardVisible,
+                        enter = slideInHorizontally { it },
+                        exit = slideOutHorizontally { it }
                     ) {
-                        GameCard(
-                            game = bottom!!,
-                            showRating = showRatings || bottom.guessed,
-                            onClick = { guess(1) }
-                        )
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = boxTwoColor,
+                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                                )
+                                .padding(2.dp)
+                        ) {
+                            GameCard(
+                                game = bottom!!,
+                                showRating = showRatings || bottom.guessed,
+                                onClick = { guess(1) }
+                            )
+                        }
                     }
                     Box(
                         modifier = Modifier
@@ -207,13 +234,10 @@ fun GameScreen(
                             )
                         }
                     }
-
-
                     Button(onClick = onQuitClick) {
                         Text(
                             text = "QUIT",
-                            letterSpacing = 4.sp,
-//                            fontSize = 24.sp
+                            letterSpacing = 4.sp
                         )
                     }
                 }
@@ -269,7 +293,11 @@ fun GameCard(
                     )
                 }
                 Spacer(modifier = Modifier.height(60.dp))
-                if (showRating || game.seen) {
+                AnimatedVisibility(
+                    visible = showRating || game.seen,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
                         Box( // Game Rating
                             modifier = Modifier
                                 .background(

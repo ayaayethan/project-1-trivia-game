@@ -115,14 +115,14 @@ class GamesViewModel : ViewModel() {
                 bot = bot.copy(seen = true)
             )
         if (choice == 0) {
-            if (!stage.top!!.guessed) {
+            if (!top.guessed) {
                 markAsGuessed(0)
                 swapGame(1)
             } else {
                 swapGame(0)
             }
         } else {
-            if (!stage.bot!!.guessed) {
+            if (!bot.guessed) {
                 markAsGuessed(1)
                 swapGame(0)
             } else {
