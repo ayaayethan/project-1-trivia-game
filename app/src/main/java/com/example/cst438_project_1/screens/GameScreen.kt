@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.filterNotNull
 import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.MaterialTheme
 
 
 @Composable
@@ -49,6 +50,10 @@ fun GameScreen(
     val context = LocalContext.current
     val db = remember { AppDatabase.get(context) }
     val userDao = remember { db.userDao() }
+    var selectedGame by remember { mutableStateOf<Int?>(null) }
+    var showRatings by remember { mutableStateOf(false) }
+    var previousChoice by remember { mutableStateOf<Int?>(null) }
+
 
     val bestScore by userDao
         .observeBestScore(userId)
@@ -68,24 +73,36 @@ fun GameScreen(
             db.userDao().saveBestScoreIfHigher(userId, score)
         }
     }
+    LaunchedEffect(showRatings) {
+        if (showRatings && previousChoice != null && !gameOver) {
+                kotlinx.coroutines.delay(1500)
+                gamesViewModel.advanceRound(previousChoice!!)
+                showRatings = false
+                selectedGame = null
+            }
+    }
 
     if (stage == null || stage!!.top == null || stage!!.bot == null ) {
-        Text("Loading...")
+        Text(
+            text ="Loading...",
+            modifier = Modifier
+                .padding(16.dp),
+        )
         return
     }
 
     val top = stage!!.top // top game
     val bottom = stage!!.bot // bottom game
 
-    val updateScore: () -> Unit = {
-        if(!gameOver) {
-            score++
-        }
-    }
-
-    val wrongAnswer: () -> Unit = {
-        gameOver = true
-    }
+//    val updateScore: () -> Unit = {
+//        if(!gameOver) {
+//            score++
+//        }
+//    }
+//
+//    val wrongAnswer: () -> Unit = {
+//        gameOver = true
+//    }
 
     val retryGame: () -> Unit = {
         gamesViewModel.startGame()
@@ -93,8 +110,13 @@ fun GameScreen(
         score = 0
     }
 
-    val guess: (Int) -> Unit = { choice ->
-        if (gamesViewModel.makeGuess(choice)) {
+    val guess: (Int) -> Unit = let@{ choice ->
+        if (showRatings) return@let // prevent double taps
+        previousChoice = choice
+        selectedGame = choice
+        showRatings = true
+        val correct = gamesViewModel.evaluateGuess(choice)
+        if (correct) {
             score++
         } else {
             gameOver = true
@@ -121,10 +143,14 @@ fun GameScreen(
 
             GameCard(
                 game = top!!,
+                showRating = showRatings || top.guessed,
+                isSelected = selectedGame == 0,
                 onClick = { guess(0) }
             )
             GameCard(
                 game = bottom!!,
+                showRating = showRatings || bottom.guessed,
+                isSelected = selectedGame == 1,
                 onClick = { guess(1) }
             )
 
@@ -146,6 +172,8 @@ fun GameScreen(
 @Composable
 fun GameCard(
     game: Game,
+    showRating: Boolean,
+    isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -158,7 +186,7 @@ fun GameCard(
         shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
         elevation = androidx.compose.material3.CardDefaults.cardElevation(8.dp)
     ) {
-        androidx.compose.foundation.layout.Box {
+        Box {
             // Game image
             coil.compose.AsyncImage(
                 model = game.background_image,
@@ -166,16 +194,47 @@ fun GameCard(
                 contentScale = androidx.compose.ui.layout.ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-            // Game title
-            androidx.compose.material3.Text(
-                text = game.name,
-                color = androidx.compose.ui.graphics.Color.White,
-                style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+            Column(
                 modifier = Modifier
-                    .align(androidx.compose.ui.Alignment.Center)
+                    .fillMaxSize()
                     .padding(16.dp),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box( // Game Title
+                    modifier = Modifier
+                        .background(
+                            androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f),
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 5.dp)
+                ) {
+                    Text(
+                        text = game.name,
+                        color = androidx.compose.ui.graphics.Color.White,
+                        style = MaterialTheme.typography.titleLarge,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                if (showRating || game.seen) {
+                        Box( // Game Rating
+                            modifier = Modifier
+                                .background(
+                                    androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f),
+                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                                )
+                                .padding(horizontal = 8.dp, vertical = 5.dp)
+                        ) {
+                            Text(
+                                text = "${game.metacritic}/100",
+                                color = androidx.compose.ui.graphics.Color.White,
+                                modifier = Modifier
+                            )
+                        }
+                }
+            }
+
         }
     }
 }

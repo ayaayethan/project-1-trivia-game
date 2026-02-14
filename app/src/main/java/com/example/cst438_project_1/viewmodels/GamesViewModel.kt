@@ -84,40 +84,86 @@ class GamesViewModel : ViewModel() {
         }
     }
 
+//    /**
+//     * Determines whether the player's guess is correct.
+//     *
+//     * @param choice `0` if user selected top game. `1` if user selected bottom game.
+//     * @return `true` if the player's guess was correct and swaps out lower game, `false` otherwise
+//     */
+//    fun makeGuess(choice: Int): Boolean {
+//        val stage = _stage.value ?: return false // return if _stage is not initialized
+//
+//        if (choice == 0) { // user chose top game
+//            if (stage.top!!.metacritic >= stage.bot!!.metacritic) {
+//                // if top game has been guessed already, swap it
+//                if (stage.top.guessed) {
+//                    swapGame(0);
+//                } else { // else swap bottom game
+//                    swapGame(1);
+//                    markAsGuessed(0); // mark top game as guessed
+//                }
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        } else { // user chose bottom game
+//            if (stage.bot!!.metacritic >= stage.top!!.metacritic) {
+//                // if bottom game has already been guessed, swap the bottom game
+//                if (stage.bot.guessed) {
+//                    swapGame(1);
+//                } else { // otherwise, swap top game
+//                    swapGame(0);
+//                    markAsGuessed(1); // mark bottom game as guessed
+//                }
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        }
+//    }
     /**
      * Determines whether the player's guess is correct.
      *
      * @param choice `0` if user selected top game. `1` if user selected bottom game.
-     * @return `true` if the player's guess was correct and swaps out lower game, `false` otherwise
+     * @return `true` if the player's guess was correct, `false` otherwise
      */
-    fun makeGuess(choice: Int): Boolean {
-        val stage = _stage.value ?: return false // return if _stage is not initialized
+    fun evaluateGuess(choice: Int): Boolean {
+        val stage = _stage.value ?: return false
 
-        if (choice == 0) { // user chose top game
-            if (stage.top!!.metacritic >= stage.bot!!.metacritic) {
-                // if top game has been guessed already, swap it
-                if (stage.top.guessed) {
-                    swapGame(0);
-                } else { // else swap bottom game
-                    swapGame(1);
-                    markAsGuessed(0); // mark top game as guessed
-                }
-                return true;
+        return if (choice == 0) {
+            stage.top!!.metacritic >= stage.bot!!.metacritic
+        } else {
+            stage.bot!!.metacritic >= stage.top!!.metacritic
+        }
+    }
+
+    /**
+     * Advances the game to the next round by swapping either the top, bottom, or both games if
+     * selected game was seen in the previous round.
+     *
+     * @param choice '0' for top game, '1' for bottom game
+     */
+    fun advanceRound(choice: Int) {
+        val stage = _stage.value ?: return
+        val top = stage.top ?: return
+        val bot = stage.bot ?: return
+        _stage.value = stage.copy(
+                top = top.copy(seen = true),
+                bot = bot.copy(seen = true)
+            )
+        if (choice == 0) {
+            if (!stage.top!!.guessed) {
+                markAsGuessed(0)
+                swapGame(1)
             } else {
-                return false;
+                swapGame(0)
             }
-        } else { // user chose bottom game
-            if (stage.bot!!.metacritic >= stage.top!!.metacritic) {
-                // if bottom game has already been guessed, swap the bottom game
-                if (stage.bot.guessed) {
-                    swapGame(1);
-                } else { // otherwise, swap top game
-                    swapGame(0);
-                    markAsGuessed(1); // mark bottom game as guessed
-                }
-                return true;
+        } else {
+            if (!stage.bot!!.guessed) {
+                markAsGuessed(1)
+                swapGame(0)
             } else {
-                return false;
+                swapGame(1)
             }
         }
     }
