@@ -108,6 +108,8 @@ fun GameScreen(
         gamesViewModel.startGame()
         gameOver = false
         score = 0
+        selectedGame = null
+        showRatings = false
     }
 
     val guess: (Int) -> Unit = let@{ choice ->
