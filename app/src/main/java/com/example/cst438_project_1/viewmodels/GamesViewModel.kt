@@ -84,43 +84,6 @@ class GamesViewModel : ViewModel() {
         }
     }
 
-//    /**
-//     * Determines whether the player's guess is correct.
-//     *
-//     * @param choice `0` if user selected top game. `1` if user selected bottom game.
-//     * @return `true` if the player's guess was correct and swaps out lower game, `false` otherwise
-//     */
-//    fun makeGuess(choice: Int): Boolean {
-//        val stage = _stage.value ?: return false // return if _stage is not initialized
-//
-//        if (choice == 0) { // user chose top game
-//            if (stage.top!!.metacritic >= stage.bot!!.metacritic) {
-//                // if top game has been guessed already, swap it
-//                if (stage.top.guessed) {
-//                    swapGame(0);
-//                } else { // else swap bottom game
-//                    swapGame(1);
-//                    markAsGuessed(0); // mark top game as guessed
-//                }
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        } else { // user chose bottom game
-//            if (stage.bot!!.metacritic >= stage.top!!.metacritic) {
-//                // if bottom game has already been guessed, swap the bottom game
-//                if (stage.bot.guessed) {
-//                    swapGame(1);
-//                } else { // otherwise, swap top game
-//                    swapGame(0);
-//                    markAsGuessed(1); // mark bottom game as guessed
-//                }
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        }
-//    }
     /**
      * Determines whether the player's guess is correct.
      *

@@ -32,10 +32,16 @@ import com.example.cst438_project_1.viewmodels.GamesViewModel
 import androidx.compose.ui.platform.LocalContext
 import com.example.cst438_project_1.data.db.AppDatabase
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.filterNotNull
 import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.example.cst438_project_1.ui.theme.CyberPurple
+import com.example.cst438_project_1.ui.theme.ElectricBlue
+import com.example.cst438_project_1.ui.theme.PurpleGrey40
+import com.example.cst438_project_1.ui.theme.gametheme
 
 
 @Composable
@@ -52,14 +58,13 @@ fun GameScreen(
     val userDao = remember { db.userDao() }
     var selectedGame by remember { mutableStateOf<Int?>(null) }
     var showRatings by remember { mutableStateOf(false) }
-    var previousChoice by remember { mutableStateOf<Int?>(null) }
-
+    var boxOneColor by remember {mutableStateOf(PurpleGrey40)}
+    var boxTwoColor by remember {mutableStateOf(PurpleGrey40)}
 
     val bestScore by userDao
         .observeBestScore(userId)
         .map { it ?: 0 }
         .collectAsState(initial = 0)
-
 
 
     // observer for stage. will update automatically when a game is swapped
@@ -71,15 +76,26 @@ fun GameScreen(
     LaunchedEffect(gameOver) {
         if (gameOver) {
             db.userDao().saveBestScoreIfHigher(userId, score)
+            if (selectedGame == 0) {
+                boxOneColor = androidx.compose.ui.graphics.Color.Red
+            } else {
+                boxTwoColor = androidx.compose.ui.graphics.Color.Red
+            }
         }
     }
     LaunchedEffect(showRatings) {
-        if (showRatings && previousChoice != null && !gameOver) {
-                kotlinx.coroutines.delay(1500)
-                gamesViewModel.advanceRound(previousChoice!!)
-                showRatings = false
-                selectedGame = null
+        if (showRatings && selectedGame != null && !gameOver) {
+            if (selectedGame == 0) {
+                boxOneColor = androidx.compose.ui.graphics.Color.Green
+            } else {
+                boxTwoColor = androidx.compose.ui.graphics.Color.Green
             }
+            kotlinx.coroutines.delay(1500)
+            gamesViewModel.advanceRound(selectedGame!!)
+            showRatings = false
+            boxOneColor = PurpleGrey40
+            boxTwoColor = PurpleGrey40
+        }
     }
 
     if (stage == null || stage!!.top == null || stage!!.bot == null ) {
@@ -94,27 +110,18 @@ fun GameScreen(
     val top = stage!!.top // top game
     val bottom = stage!!.bot // bottom game
 
-//    val updateScore: () -> Unit = {
-//        if(!gameOver) {
-//            score++
-//        }
-//    }
-//
-//    val wrongAnswer: () -> Unit = {
-//        gameOver = true
-//    }
-
     val retryGame: () -> Unit = {
         gamesViewModel.startGame()
         gameOver = false
         score = 0
         selectedGame = null
         showRatings = false
+        boxOneColor = PurpleGrey40
+        boxTwoColor = PurpleGrey40
     }
 
     val guess: (Int) -> Unit = let@{ choice ->
         if (showRatings) return@let // prevent double taps
-        previousChoice = choice
         selectedGame = choice
         showRatings = true
         val correct = gamesViewModel.evaluateGuess(choice)
@@ -124,48 +131,92 @@ fun GameScreen(
             gameOver = true
         }
     }
-    Box(modifier = modifier.fillMaxSize()) {
-
-
-        Text(
-            text = "Best Streak: $bestScore",
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(16.dp)
-        )
-
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+    gametheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
         ) {
-            Text("Game Screen Placeholder")
-            Text("Score: $score")
-            Spacer(modifier = Modifier.height(24.dp))
+            Box(modifier = modifier.fillMaxSize()) {
 
-            GameCard(
-                game = top!!,
-                showRating = showRatings || top.guessed,
-                isSelected = selectedGame == 0,
-                onClick = { guess(0) }
-            )
-            GameCard(
-                game = bottom!!,
-                showRating = showRatings || bottom.guessed,
-                isSelected = selectedGame == 1,
-                onClick = { guess(1) }
-            )
 
-            Button(
-                onClick = retryGame,
-                modifier = Modifier.alpha(if (gameOver) 1f else 0f),
-                enabled = gameOver
-            ) {
-                Text(text = "Retry Game")
-            }
+                Text(
+                    text = "BEST STREAK: $bestScore",
+                    fontWeight = FontWeight.Bold,
+                    color = CyberPurple,
+                    fontSize = 16.sp,
+                    letterSpacing = 4.sp,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(16.dp)
+                )
 
-            Button(onClick = onQuitClick) {
-                Text(text = "Quit")
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+//                Text("Game Screen Placeholder")
+                    Text(
+                        text = "SCORE: $score",
+                        color = ElectricBlue,
+                        fontSize = 24.sp,
+                        letterSpacing = 4.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = boxOneColor,
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                            )
+                    ) {
+                        GameCard(
+                            game = top!!,
+                            showRating = showRatings || top.guessed,
+                            onClick = { guess(0) }
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = boxTwoColor,
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                            )
+                            .padding(2.dp)
+                    ) {
+                        GameCard(
+                            game = bottom!!,
+                            showRating = showRatings || bottom.guessed,
+                            onClick = { guess(1) }
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .padding(24.dp)
+                    ) {
+                        Button(
+                            onClick = retryGame,
+                            modifier = Modifier.alpha(if (gameOver) 1f else 0f),
+                            enabled = gameOver
+                        ) {
+                            Text(
+                                text = "RETRY GAME",
+                                letterSpacing = 4.sp
+                            )
+                        }
+                    }
+
+
+                    Button(onClick = onQuitClick) {
+                        Text(
+                            text = "QUIT",
+                            letterSpacing = 4.sp,
+//                            fontSize = 24.sp
+                        )
+                    }
+                }
             }
         }
     }
@@ -175,7 +226,6 @@ fun GameScreen(
 fun GameCard(
     game: Game,
     showRating: Boolean,
-    isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -199,7 +249,7 @@ fun GameCard(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(6.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -218,7 +268,7 @@ fun GameCard(
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(60.dp))
                 if (showRating || game.seen) {
                         Box( // Game Rating
                             modifier = Modifier
@@ -231,6 +281,7 @@ fun GameCard(
                             Text(
                                 text = "${game.metacritic}/100",
                                 color = androidx.compose.ui.graphics.Color.White,
+                                fontSize = 24.sp,
                                 modifier = Modifier
                             )
                         }
