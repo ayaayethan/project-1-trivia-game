@@ -76,20 +76,22 @@ I led the Room database implementation for user accounts and persistence, improv
 1. Carol's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3AAnthony-Brunetto)
 
 #### What was your role / which stories did you work on
-Carol mostly worked on getting the app to run faster, better, and higher.  She did the best work possible but her contributions were overpowered and not well received by the fans.
+I mainly worked on the gameplay screen UI providing feedback for correct and incorrect guesses, smoothly transitioning between rounds, and the help screen providing gameplay instructions.
 
 + What was the biggest challenge? 
-  + Managing pull requests and merges
+  + Learning how to properly review pull requests
 + Why was it a challenge?
-  + We were all new to git/github and not everyone followed convention
-  + How was the challenge addressed?
+  +  This was my first time using pull requests
+  +Initially I didn't know how to properly review a pull request
++ How was the challenge addressed?
   + I went to the TA for help and used ChatGPT and web resources to get more comfortable with git.
 + Favorite / most interesting part of this project
-  + Finally getting the IDs from the API calls to store in the ROOM database
+  + In class lectures about how to be a good reviewer
+  + Researching online best practices
 + If you could do it over, what would you change?
-  + I would get the ROOM database setup FIRST
+  + I would probably use only one activity rather than two
 + What is the most valuable thing you learned?
-  + Do the work early and document EVERYTHING
+  + Definitely learning GitHub issues + pull requests and how to be a code reviewer
 
 
 ## Conclusion
