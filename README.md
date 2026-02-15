@@ -56,20 +56,20 @@ Carol mostly worked on getting the app to run faster, better, and higher.  She d
 1. Bhavishya's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Abhavishyadash)
 
 #### What was your role / which stories did you work on
-My role was to 
+I led the Room database implementation for user accounts and persistence, improved the app’s UI, added full dark mode theming, and implemented the high score system that saves and displays each user’s best score from the database.
 
 + What was the biggest challenge? 
-  + Managing pull requests and merges
+  + Fixing the Gradle Sync errors.
 + Why was it a challenge?
-  + We were all new to git/github and not everyone followed convention
+  + Diffrent platforms, caused some gradle issues that I have never seen before. It caused me to merge my first PR dark.
   + How was the challenge addressed?
-  + I went to the TA for help and used ChatGPT and web resources to get more comfortable with git.
+  + I used ChatGPT for help, and also asked Roberto once.
 + Favorite / most interesting part of this project
-  + Finally getting the IDs from the API calls to store in the ROOM database
+  + To be honest nothing, but to answer this question I would say trying diffrent UI themes was somewhat "interesting".
 + If you could do it over, what would you change?
-  + I would get the ROOM database setup FIRST
+  + Not take Gradle Sync issues lightly, and try to be the first one to commit to the Repo so everyone else would follow.
 + What is the most valuable thing you learned?
-  + Do the work early and document EVERYTHING
+  + Do the work early and document everything simultaenously. As we have already finished our project and tomorrow is submission, its sort of hard to recall where i found dificulty for the stuff I did 3 weeks ago.
 
 ### Anthony Brunetto
 1. Carol's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3AAnthony-Brunetto)
