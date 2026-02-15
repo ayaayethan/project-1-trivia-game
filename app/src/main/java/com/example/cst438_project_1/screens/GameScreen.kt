@@ -32,9 +32,21 @@ import com.example.cst438_project_1.viewmodels.GamesViewModel
 import androidx.compose.ui.platform.LocalContext
 import com.example.cst438_project_1.data.db.AppDatabase
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.filterNotNull
 import androidx.compose.runtime.collectAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.example.cst438_project_1.ui.theme.CyberPurple
+import com.example.cst438_project_1.ui.theme.ElectricBlue
+import com.example.cst438_project_1.ui.theme.PurpleGrey40
+import com.example.cst438_project_1.ui.theme.gametheme
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 
 
 @Composable
@@ -49,12 +61,17 @@ fun GameScreen(
     val context = LocalContext.current
     val db = remember { AppDatabase.get(context) }
     val userDao = remember { db.userDao() }
+    var selectedGame by remember { mutableStateOf<Int?>(null) }
+    var showRatings by remember { mutableStateOf(false) }
+    var boxOneColor by remember {mutableStateOf(PurpleGrey40)}
+    var boxTwoColor by remember {mutableStateOf(PurpleGrey40)}
+    var topCardVisible by remember { mutableStateOf(true) }
+    var bottomCardVisible by remember { mutableStateOf(true) }
 
     val bestScore by userDao
         .observeBestScore(userId)
         .map { it ?: 0 }
         .collectAsState(initial = 0)
-
 
 
     // observer for stage. will update automatically when a game is swapped
@@ -66,78 +83,164 @@ fun GameScreen(
     LaunchedEffect(gameOver) {
         if (gameOver) {
             db.userDao().saveBestScoreIfHigher(userId, score)
+            if (selectedGame == 0) {
+                boxOneColor = androidx.compose.ui.graphics.Color.Red
+            } else {
+                boxTwoColor = androidx.compose.ui.graphics.Color.Red
+            }
+        }
+    }
+    LaunchedEffect(showRatings) {
+        if (showRatings && selectedGame != null && !gameOver) {
+            if (selectedGame == 0) {
+                boxOneColor = androidx.compose.ui.graphics.Color.Green
+            } else {
+                boxTwoColor = androidx.compose.ui.graphics.Color.Green
+            }
+            kotlinx.coroutines.delay(1000)
+            if (selectedGame == 0) {
+                bottomCardVisible = false
+            } else {
+                topCardVisible = false
+            }
+            kotlinx.coroutines.delay(500)
+            gamesViewModel.advanceRound(selectedGame!!)
+            topCardVisible = true
+            bottomCardVisible = true
+            showRatings = false
+            boxOneColor = PurpleGrey40
+            boxTwoColor = PurpleGrey40
         }
     }
 
     if (stage == null || stage!!.top == null || stage!!.bot == null ) {
-        Text("Loading...")
+        Text(
+            text ="Loading...",
+            modifier = Modifier
+                .padding(16.dp),
+        )
         return
     }
 
     val top = stage!!.top // top game
     val bottom = stage!!.bot // bottom game
 
-    val updateScore: () -> Unit = {
-        if(!gameOver) {
-            score++
-        }
-    }
-
-    val wrongAnswer: () -> Unit = {
-        gameOver = true
-    }
-
     val retryGame: () -> Unit = {
         gamesViewModel.startGame()
         gameOver = false
         score = 0
+        selectedGame = null
+        showRatings = false
+        boxOneColor = PurpleGrey40
+        boxTwoColor = PurpleGrey40
     }
 
-    val guess: (Int) -> Unit = { choice ->
-        if (gamesViewModel.makeGuess(choice)) {
+    val guess: (Int) -> Unit = let@{ choice ->
+        if (showRatings) return@let // prevent double taps
+        selectedGame = choice
+        showRatings = true
+        val correct = gamesViewModel.evaluateGuess(choice)
+        if (correct) {
             score++
         } else {
             gameOver = true
         }
     }
-    Box(modifier = modifier.fillMaxSize()) {
-
-
-        Text(
-            text = "Best Streak: $bestScore",
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(16.dp)
-        )
-
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+    gametheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
         ) {
-            Text("Game Screen Placeholder")
-            Text("Score: $score")
-            Spacer(modifier = Modifier.height(24.dp))
+            Box(modifier = modifier.fillMaxSize()) {
 
-            GameCard(
-                game = top!!,
-                onClick = { guess(0) }
-            )
-            GameCard(
-                game = bottom!!,
-                onClick = { guess(1) }
-            )
 
-            Button(
-                onClick = retryGame,
-                modifier = Modifier.alpha(if (gameOver) 1f else 0f),
-                enabled = gameOver
-            ) {
-                Text(text = "Retry Game")
-            }
+                Text(
+                    text = "BEST STREAK: $bestScore",
+                    fontWeight = FontWeight.Bold,
+                    color = CyberPurple,
+                    fontSize = 16.sp,
+                    letterSpacing = 4.sp,
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(16.dp)
+                )
 
-            Button(onClick = onQuitClick) {
-                Text(text = "Quit")
+                Column(
+                    modifier = Modifier.align(Alignment.Center),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "SCORE: $score",
+                        color = ElectricBlue,
+                        fontSize = 24.sp,
+                        letterSpacing = 4.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    AnimatedVisibility(
+                        visible = topCardVisible,
+                        enter = slideInHorizontally { -it },
+                        exit = slideOutHorizontally { -it }
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = boxOneColor,
+                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                                )
+                                .padding(2.dp)
+                        ) {
+                            GameCard(
+                                game = top!!,
+                                showRating = showRatings || top.guessed,
+                                onClick = { guess(0) }
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    AnimatedVisibility(
+                        visible = bottomCardVisible,
+                        enter = slideInHorizontally { it },
+                        exit = slideOutHorizontally { it }
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = boxTwoColor,
+                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                                )
+                                .padding(2.dp)
+                        ) {
+                            GameCard(
+                                game = bottom!!,
+                                showRating = showRatings || bottom.guessed,
+                                onClick = { guess(1) }
+                            )
+                        }
+                    }
+                    Box(
+                        modifier = Modifier
+                            .padding(24.dp)
+                    ) {
+                        Button(
+                            onClick = retryGame,
+                            modifier = Modifier.alpha(if (gameOver) 1f else 0f),
+                            enabled = gameOver
+                        ) {
+                            Text(
+                                text = "RETRY GAME",
+                                letterSpacing = 4.sp
+                            )
+                        }
+                    }
+                    Button(onClick = onQuitClick) {
+                        Text(
+                            text = "QUIT",
+                            letterSpacing = 4.sp
+                        )
+                    }
+                }
             }
         }
     }
@@ -146,6 +249,7 @@ fun GameScreen(
 @Composable
 fun GameCard(
     game: Game,
+    showRating: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -158,7 +262,7 @@ fun GameCard(
         shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
         elevation = androidx.compose.material3.CardDefaults.cardElevation(8.dp)
     ) {
-        androidx.compose.foundation.layout.Box {
+        Box {
             // Game image
             coil.compose.AsyncImage(
                 model = game.background_image,
@@ -166,16 +270,52 @@ fun GameCard(
                 contentScale = androidx.compose.ui.layout.ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-            // Game title
-            androidx.compose.material3.Text(
-                text = game.name,
-                color = androidx.compose.ui.graphics.Color.White,
-                style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+            Column(
                 modifier = Modifier
-                    .align(androidx.compose.ui.Alignment.Center)
-                    .padding(16.dp),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
+                    .fillMaxSize()
+                    .padding(6.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box( // Game Title
+                    modifier = Modifier
+                        .background(
+                            androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f),
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 5.dp)
+                ) {
+                    Text(
+                        text = game.name,
+                        color = androidx.compose.ui.graphics.Color.White,
+                        style = MaterialTheme.typography.titleLarge,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                }
+                Spacer(modifier = Modifier.height(60.dp))
+                AnimatedVisibility(
+                    visible = showRating || game.seen,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                        Box( // Game Rating
+                            modifier = Modifier
+                                .background(
+                                    androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f),
+                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                                )
+                                .padding(horizontal = 8.dp, vertical = 5.dp)
+                        ) {
+                            Text(
+                                text = "${game.metacritic}/100",
+                                color = androidx.compose.ui.graphics.Color.White,
+                                fontSize = 24.sp,
+                                modifier = Modifier
+                            )
+                        }
+                }
+            }
+
         }
     }
 }

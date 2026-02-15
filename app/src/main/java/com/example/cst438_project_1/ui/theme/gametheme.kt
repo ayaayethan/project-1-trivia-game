@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 // Custom "Gaming" Color Palette
-private val MidnightBlue = Color(0xFF121212) // Deep background
-private val ElectricBlue = Color(0xFF00E5FF) // Neon primary
-private val CyberPurple = Color(0xFFBB86FC) // Accent
-private val ErrorRed = Color(0xFFCF6679)    // Errors
+val MidnightBlue = Color(0xFF121212) // Deep background
+val ElectricBlue = Color(0xFF00E5FF) // Neon primary
+val CyberPurple = Color(0xFFBB86FC) // Accent
+val ErrorRed = Color(0xFFCF6679)    // Errors
 
 private val GameColorScheme = darkColorScheme(
     primary = ElectricBlue,
