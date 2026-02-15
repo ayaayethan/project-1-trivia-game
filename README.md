@@ -2,7 +2,7 @@
 
 [Video Walkthrough]
 <!-- Ads have really ruined rick-rolling. -->
-[Github Repo]
+[Github Repo](https://github.com/ayaayethan/project-1-trivia-game.git)
 
 ## Overview
 This is a sports betting assitant that makes use of an API we found [here](https://github.com/public-apis/public-apis?tab=readme-ov-file).
