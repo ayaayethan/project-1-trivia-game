@@ -26,7 +26,7 @@ This is a Video Game rating guessing game that makes use of an API we found [her
 I primarily worked on setting up our API by using the RetroFit library to fetch the data that we needed. I also created the Retrofit instance, repositories, data classes, as well as the GamesViewModel which contained methods used to fetch games, initialize gameplay, make guesses, and swap games from the stage.
 + What was the biggest challenge? 
 + Why was it a challenge?
- +  The biggest challenge was figuring out how to properly query games from the API in the most efficient way. Since we would need to swap out a game with a new one after a user makes a guess, we thought that querying a new game from the API after each guess might make the gameplay feel slow and less responsive.
+  + The biggest challenge was figuring out how to properly query games from the API in the most efficient way. Since we would need to swap out a game with a new one after a user makes a guess, we thought that querying a new game from the API after each guess might make the gameplay feel slow and less responsive.
 + How was the challenge addressed?
  +  Instead of querying games one at a time, we decided to query games in bulks of 10. These games were then stored in a queue, and games were pulled from this queue after each guess. Once the queue only had 2 items remaining, we would fetch another 10 games from the API and reload the queue. This way, we were able effectively paginate our data, allowing us to make requests less frequently, and speed up the response time of swapping out old games with a new one.
 + Favorite / most interesting part of this project?
