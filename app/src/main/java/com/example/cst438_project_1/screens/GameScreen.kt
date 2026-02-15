@@ -203,6 +203,7 @@ fun GameScreen(
                     ) {
                         AnimatedContent(
                             targetState = top,
+                            contentKey = { it?.id },
                             transitionSpec = {
                                 slideInHorizontally(
                                     animationSpec = tween(durationMillis = 700)
@@ -239,6 +240,7 @@ fun GameScreen(
                     ) {
                         AnimatedContent(
                             targetState = bottom,
+                            contentKey = { it?.id },
                             transitionSpec = {
                                 slideInHorizontally(
                                     animationSpec = tween(durationMillis = 700)
