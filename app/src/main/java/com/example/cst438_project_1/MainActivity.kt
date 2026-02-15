@@ -20,6 +20,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        viewModel.preloadInitialGames()
+
         setContent {
             Cst438project1Theme {
                 Surface(

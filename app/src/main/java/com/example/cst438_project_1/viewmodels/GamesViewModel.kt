@@ -1,23 +1,38 @@
 package com.example.cst438_project_1.viewmodels
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil.imageLoader
+import coil.request.ImageRequest
 import com.example.cst438_project_1.API.DataClass.Game
 import com.example.cst438_project_1.API.RetrofitInstance
+import com.example.cst438_project_1.BuildConfig
+import com.example.cst438_project_1.data.repository.GameRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.random.Random
-import kotlin.random.nextInt
-import com.example.cst438_project_1.BuildConfig
-import kotlinx.coroutines.Dispatchers
 
 data class Stage(val top: Game?, val bot: Game?)
-class GamesViewModel : ViewModel() {
-    private val queue = ArrayDeque<Game>()
+
+class GamesViewModel(
+    application: Application
+) : AndroidViewModel(application) {
+    private val queue = GameRepository.queue
     private val _stage = MutableLiveData<Stage>()
     val stage: LiveData<Stage> = _stage
+    private val imageLoader = getApplication<Application>().imageLoader
+
+    fun preloadInitialGames() {
+        viewModelScope.launch {
+            if(queue.isEmpty()) {
+                fetchGames()
+            }
+        }
+    }
 
     /**
      * Loads 10 games into the queue
@@ -25,8 +40,8 @@ class GamesViewModel : ViewModel() {
     private suspend fun fetchGames() {
         try {
             // generates a random page from APIs
-            val page : Int = Random.nextInt(1,101)
-            val apiKey : String = BuildConfig.API_KEY
+            val page: Int = Random.nextInt(1, 101)
+            val apiKey: String = BuildConfig.API_KEY
 
             val response = RetrofitInstance.api.getGames(
                 key = apiKey,
@@ -37,9 +52,14 @@ class GamesViewModel : ViewModel() {
             )
 
             if (response.isSuccessful) {
-                // TODO: Shuffle games inside the response
-                val gameList = response.body()?.results ?: emptyList()
-                queue.addAll(gameList);
+                val gameList = response.body()?.results?.shuffled() ?: emptyList()
+                queue.addAll(gameList)
+                gameList.forEach { game ->
+                    val request = ImageRequest.Builder(getApplication())
+                        .data(game.background_image)
+                        .build()
+                    imageLoader.enqueue(request)
+                }
             } else {
                 Log.e("API", "Error: ${response.code()}")
             }
@@ -54,7 +74,7 @@ class GamesViewModel : ViewModel() {
      */
     fun debugFetchGames() {
         viewModelScope.launch(Dispatchers.IO) {
-            val apiKey : String = BuildConfig.API_KEY
+            val apiKey: String = BuildConfig.API_KEY
 
             val response = RetrofitInstance.api.getGames(
                 key = apiKey,
@@ -74,13 +94,13 @@ class GamesViewModel : ViewModel() {
     fun startGame() {
         viewModelScope.launch {
             if (queue.size <= 2) {
-                fetchGames();
+                fetchGames()
             }
 
             _stage.value = Stage(
                 queue.removeFirst(),
                 queue.removeFirst()
-            );
+            )
         }
     }
 
@@ -111,9 +131,9 @@ class GamesViewModel : ViewModel() {
         val top = stage.top ?: return
         val bot = stage.bot ?: return
         _stage.value = stage.copy(
-                top = top.copy(seen = true),
-                bot = bot.copy(seen = true)
-            )
+            top = top.copy(seen = true),
+            bot = bot.copy(seen = true)
+        )
         if (choice == 0) {
             if (!top.guessed) {
                 markAsGuessed(0)
@@ -138,19 +158,19 @@ class GamesViewModel : ViewModel() {
      */
     private fun swapGame(gameToSwap: Int) {
         viewModelScope.launch {
-            val stage = _stage.value ?: return@launch;
+            val stage = _stage.value ?: return@launch
 
-            val  newStage = if (gameToSwap == 0) { // swap the top game
-                Stage(queue.removeFirstOrNull(), stage.bot);
+            val newStage = if (gameToSwap == 0) { // swap the top game
+                Stage(queue.removeFirstOrNull(), stage.bot)
             } else { // swap the bottom game
-                Stage(stage.top, queue.removeFirstOrNull());
+                Stage(stage.top, queue.removeFirstOrNull())
             }
 
-            _stage.value = newStage;
+            _stage.value = newStage
 
             // reload queue if it's running low
             if (queue.size <= 2) {
-                fetchGames();
+                fetchGames()
             }
         }
     }
@@ -168,10 +188,12 @@ class GamesViewModel : ViewModel() {
                 val top = currentStage.top ?: return
                 currentStage.copy(top = top.copy(guessed = true))
             }
+
             1 -> {
                 val bot = currentStage.bot ?: return
                 currentStage.copy(bot = bot.copy(guessed = true))
             }
+
             else -> return
         }
     }
