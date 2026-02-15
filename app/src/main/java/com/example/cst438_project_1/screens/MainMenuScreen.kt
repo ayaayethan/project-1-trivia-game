@@ -50,23 +50,20 @@ fun MainMenuScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                BrandingHeader(
-                    subtitle = {
-                        Text(
-                            text = "THE ULTIMATE RATING CHALLENGE",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.secondary,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                )
-
-                // Primary Action
-                GameButton(
-                    text = "Play Now",
-                    onClick = onPlayClick,
-                    modifier = Modifier.padding(bottom = 48.dp)
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    BrandingHeader(
+                        subtitle = {
+                            Text(
+                                text = "THE ULTIMATE RATING CHALLENGE",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.secondary,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    GameButton(text = "Play Now", onClick = onPlayClick)
+                }
 
                 // Secondary Actions
                 Row(

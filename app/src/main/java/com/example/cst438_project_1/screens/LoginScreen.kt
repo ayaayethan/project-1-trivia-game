@@ -37,7 +37,7 @@ fun LoginScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Input Section
             GameTextField(
