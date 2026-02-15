@@ -180,7 +180,7 @@ fun GameScreen(
                     letterSpacing = 4.sp,
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(16.dp)
+                        .padding(start = 16.dp, top = 64.dp, end = 16.dp, bottom = 16.dp)
                 )
 
                 Column(
