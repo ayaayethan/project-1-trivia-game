@@ -110,10 +110,8 @@ class GamesViewModel : ViewModel() {
         val stage = _stage.value ?: return
         val top = stage.top ?: return
         val bot = stage.bot ?: return
-        _stage.value = stage.copy(
-                top = top.copy(seen = true),
-                bot = bot.copy(seen = true)
-            )
+        top.seen = true
+        bot.seen = true
         if (choice == 0) {
             if (!top.guessed) {
                 markAsGuessed(0)
@@ -161,18 +159,13 @@ class GamesViewModel : ViewModel() {
      * @param gameToMark Game to mark as guessed. `0` for top `1` for bottom
      */
     private fun markAsGuessed(gameToMark: Int) {
-        val currentStage = _stage.value ?: return
-
-        _stage.value = when (gameToMark) {
-            0 -> {
-                val top = currentStage.top ?: return
-                currentStage.copy(top = top.copy(guessed = true))
-            }
-            1 -> {
-                val bot = currentStage.bot ?: return
-                currentStage.copy(bot = bot.copy(guessed = true))
-            }
-            else -> return
+        val stage = _stage.value ?: return
+        val top = stage.top ?: return
+        val bot = stage.bot ?: return
+        if (gameToMark == 0) {
+            top.guessed = true
+        } else if (gameToMark == 1) {
+            bot.guessed = true
         }
     }
 }

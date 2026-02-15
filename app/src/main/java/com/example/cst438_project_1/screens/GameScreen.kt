@@ -1,5 +1,6 @@
 package com.example.cst438_project_1.screens
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,10 +44,12 @@ import com.example.cst438_project_1.ui.theme.ElectricBlue
 import com.example.cst438_project_1.ui.theme.PurpleGrey40
 import com.example.cst438_project_1.ui.theme.gametheme
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 
 
 @Composable
@@ -65,8 +68,6 @@ fun GameScreen(
     var showRatings by remember { mutableStateOf(false) }
     var boxOneColor by remember {mutableStateOf(PurpleGrey40)}
     var boxTwoColor by remember {mutableStateOf(PurpleGrey40)}
-    var topCardVisible by remember { mutableStateOf(true) }
-    var bottomCardVisible by remember { mutableStateOf(true) }
 
     val bestScore by userDao
         .observeBestScore(userId)
@@ -97,16 +98,8 @@ fun GameScreen(
             } else {
                 boxTwoColor = androidx.compose.ui.graphics.Color.Green
             }
-            kotlinx.coroutines.delay(1000)
-            if (selectedGame == 0) {
-                bottomCardVisible = false
-            } else {
-                topCardVisible = false
-            }
-            kotlinx.coroutines.delay(500)
+            kotlinx.coroutines.delay(1500)
             gamesViewModel.advanceRound(selectedGame!!)
-            topCardVisible = true
-            bottomCardVisible = true
             showRatings = false
             boxOneColor = PurpleGrey40
             boxTwoColor = PurpleGrey40
@@ -178,45 +171,75 @@ fun GameScreen(
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(24.dp))
-                    AnimatedVisibility(
-                        visible = topCardVisible,
-                        enter = slideInHorizontally { -it },
-                        exit = slideOutHorizontally { -it }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16f / 9f)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    color = boxOneColor,
-                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                        AnimatedContent(
+                            targetState = top,
+                            transitionSpec = {
+                                slideInHorizontally(
+                                    animationSpec = tween(durationMillis = 700)
+                                ) { fullWidth -> -fullWidth } togetherWith
+                                        slideOutHorizontally(
+                                            animationSpec = tween(durationMillis = 700)
+                                        ) { fullWidth -> fullWidth }
+                            },
+                            label = "TopCardTransition"
+                        ) { game ->
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = boxOneColor,
+                                        shape = androidx.compose.foundation.shape.RoundedCornerShape(
+                                            16.dp
+                                        )
+                                    )
+                                    .padding(2.dp)
+                            ) {
+                                GameCard(
+                                    game = game!!,
+                                    showRating = showRatings || game.guessed,
+                                    onClick = { guess(0) }
                                 )
-                                .padding(2.dp)
-                        ) {
-                            GameCard(
-                                game = top!!,
-                                showRating = showRatings || top.guessed,
-                                onClick = { guess(0) }
-                            )
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(4.dp))
-                    AnimatedVisibility(
-                        visible = bottomCardVisible,
-                        enter = slideInHorizontally { it },
-                        exit = slideOutHorizontally { it }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16f / 9f)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .background(
-                                    color = boxTwoColor,
-                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                        AnimatedContent(
+                            targetState = bottom,
+                            transitionSpec = {
+                                slideInHorizontally(
+                                    animationSpec = tween(durationMillis = 700)
+                                ) { fullWidth -> fullWidth } togetherWith
+                                        slideOutHorizontally(
+                                            animationSpec = tween(durationMillis = 700)
+                                        ) { fullWidth -> -fullWidth }
+                            },
+                            label = "BottomCardTransition"
+                        ) { game ->
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = boxTwoColor,
+                                        shape = androidx.compose.foundation.shape.RoundedCornerShape(
+                                            16.dp
+                                        )
+                                    )
+                                    .padding(2.dp)
+                            ) {
+                                GameCard(
+                                    game = game!!,
+                                    showRating = showRatings || game.guessed,
+                                    onClick = { guess(1) }
                                 )
-                                .padding(2.dp)
-                        ) {
-                            GameCard(
-                                game = bottom!!,
-                                showRating = showRatings || bottom.guessed,
-                                onClick = { guess(1) }
-                            )
+                            }
                         }
                     }
                     Box(
