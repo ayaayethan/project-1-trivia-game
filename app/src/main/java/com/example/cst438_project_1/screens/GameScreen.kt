@@ -57,7 +57,12 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 
-
+/**
+ * Loads the buttons and text displays for the Game Screen
+ *
+ * @param userId The currently logged in user id
+ * @param onQuitClick The function for the quit button
+ */
 @Composable
 fun GameScreen(
     userId: Long,
@@ -74,8 +79,6 @@ fun GameScreen(
     var showRatings by remember { mutableStateOf(false) }
     var boxOneColor by remember { mutableStateOf(PurpleGrey40) }
     var boxTwoColor by remember { mutableStateOf(PurpleGrey40) }
-    var topCardVisible by remember { mutableStateOf(true) }
-    var bottomCardVisible by remember { mutableStateOf(true) }
 
     val bestScore by userDao
         .observeBestScore(userId)
@@ -106,24 +109,7 @@ fun GameScreen(
             } else {
                 boxTwoColor = Color.Green
             }
-            kotlinx.coroutines.delay(1000)
-
-            // determine which card to animate
-            if (selectedGame == 0) {
-                if (!stage!!.top!!.guessed) {
-                    bottomCardVisible = false
-                } else {
-                    topCardVisible = false
-                }
-            } else {
-                if (!stage!!.bot!!.guessed) {
-                    topCardVisible = false
-                } else {
-                    bottomCardVisible = false
-                }
-            }
-
-            kotlinx.coroutines.delay(500)
+            kotlinx.coroutines.delay(1500)
             gamesViewModel.advanceRound(selectedGame!!)
             showRatings = false
             boxOneColor = PurpleGrey40
@@ -296,6 +282,15 @@ fun GameScreen(
     }
 }
 
+/**
+ * Creates a game on screen containing the title and rating. The rating only appears once a guess is
+ * made by the user.
+ *
+ * @param game The game object to be displayed
+ * @param showRating 'true' if the rating should be displayed to the user
+ * @param onClick The function to be called on a user's click
+ * @param modifier The modifier for the GameCard
+ */
 @Composable
 fun GameCard(
     game: Game,
