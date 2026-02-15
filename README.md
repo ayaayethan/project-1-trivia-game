@@ -10,10 +10,11 @@ This is a sports betting assitant that makes use of an API we found [here](https
 ## Introduction
 
 * How was communication managed?
-* Coms were primarily managed on Discord and in-person meeting during class.
+ + Coms were primarily managed on Discord and in-person meeting during class.
 * How many stories/issues were initially considered?
- 
+  + Initially a total of 20 User stories were considered.
 * How many stories/issues were completed
+  + A total of 15 user stories and 43 issues were completed.
 
 ## Team Retrospective
 
@@ -95,6 +96,8 @@ I mainly worked on the gameplay screen UI providing feedback for correct and inc
 ## Conclusion
 
 - How successful was the project?
-  - Think in terms of what did you set out to do and what actually got done?
+  - I think the project was a complete success. We met all deadlines efficiently, all of the team members were competent and focused to understand the situation properly. Overall Team dynamics were very high and smooth and there was no communication gaps in between. 
 - What was the largest victory?
+ - The Larget VICTORY was when we got the main game functionality working. When the images were properly showing up and it was actually recording our scores and saving it to the database, we all felt so much accomplished.
 - Final assessment of the project
+ - This project was very helpful in preparing us for both capstone and real-life projects. This project taught us that communication and documentation is key. Though we succeeded at communication, we never thought of the later. The project is finished and right now while filling this Readme we are scravenging around our previous submissions to look for our orginal plans and user stories. Documenting changes and enhancement is key. As a conclusion of this assesment, we would like to say that overall, our actions were very quick and decisive while fixing bugs and errors, overall Team cooporation was very high. And if we get a chance, we will do it again.
