@@ -92,11 +92,9 @@ I mainly worked on the gameplay screen UI providing feedback for correct and inc
 + What is the most valuable thing you learned?
   + Definitely learning GitHub issues + pull requests and how to be a code reviewer
 
-
 ## Conclusion
-
 - How successful was the project?
-  - I think the project was a complete success. We met all deadlines efficiently, all of the team members were competent and focused to understand the situation properly. Overall Team dynamics were very high and smooth and there was no communication gaps in between. 
+  - I think the project was a complete success. We met all deadlines efficiently, all of the team members were competent and focused to understand the situation properly. Overall team dynamics were very high and smooth and there was no communication gaps in between. 
 - What was the largest victory?
  - The Larget VICTORY was when we got the main game functionality working. When the images were properly showing up and it was actually recording our scores and saving it to the database, we all felt so much accomplished.
 - Final assessment of the project
