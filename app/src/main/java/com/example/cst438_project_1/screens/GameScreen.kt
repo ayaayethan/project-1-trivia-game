@@ -283,8 +283,8 @@ fun GameScreen(
 }
 
 /**
- * Creates a game on screen containing the title and rating which appears once a guess has been made
- * by the user
+ * Creates a game on screen containing the title and rating. The rating only appears once a guess is
+ * made by the user.
  *
  * @param game The game object to be displayed
  * @param showRating 'true' if the rating should be displayed to the user
