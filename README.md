@@ -1,66 +1,60 @@
-# GameDiff
+# Project 01 Retrospective and overview
 
-An Android trivia-style game where you compare two game cards and try to keep your streak going. The app includes user accounts and saves your **best score (high score)** locally using **Room** so your top score persists across app restarts.
+[Video Walkthrough]
+<!-- Ads have really ruined rick-rolling. -->
+[Github Repo]
 
----
+## Overview
+This is a sports betting assitant that makes use of an API we found [here](https://github.com/public-apis/public-apis?tab=readme-ov-file).
 
-## What the app does
+## Introduction
 
-### Core gameplay
-- The app shows **two game cards** (top and bottom).
-- You make a guess by tapping one of the cards (based on the rule shown in the game screen).
-- If your guess is correct:
-  - Your **score increases**
-  - The game continues with the next round
-- If your guess is wrong:
-  - The game ends (**Game Over**)
-  - You can retry or quit
+* How was communication managed?
+ Coms were primarily managed on Discord and in-person meeting during class.
+* How many stories/issues were initially considered?
+ 
+* How many stories/issues were completed
 
-### Accounts and saved high scores
-- Users can **create an account** (sign up) and **log in**
-- The app stores each user's **best score** in a local database using **Room**
-- Only the **highest score ever achieved** is saved
-  - If you score lower than your best score, it will **not overwrite**
-- The best score is displayed on the **top-left of the game screen**
+## Team Retrospective
 
----
+### Team Member name
 
-## How to use the app
+- [a link to your pull requests]()
+- [a link to your issues]()
 
-### 1) Sign up / Log in
-1. Open the app
-2. If you don’t have an account, go to **Sign Up**
-3. Create a username + password
-4. Log in with the same credentials
+#### What was your role / which stories did you work on
 
-### 2) Start playing
-1. From the **Main Menu**, press **Play**
-2. The game screen will open:
-   - Your current **Score** is shown
-   - Your saved **Best Score** is shown (top-left)
++ What was the biggest challenge? 
++ Why was it a challenge?
+  + How was the challenge addressed?
++ Favorite / most interesting part of this project
++ If you could do it over, what would you change?
++ What is the most valuable thing you learned?
 
-### 3) Make guesses
-- Tap one of the game cards to submit your choice
-- Each correct guess adds +1 to your score
-- A wrong guess ends the run
+### Carol Danvers
+1. Carol's pull requests are [here](https://github.com/Jonathan-Welham/Bits-Bots/pulls/@CarolDanvers)
+1. Carol's Github issues are [here](https://github.com/FedericoRubino/cst438_project2/issues/created_by/@FedericoRubino)
 
-### 4) Retry / Quit
-- **Retry** starts a new run (score resets to 0)
-- **Quit** returns you to the main menu
+#### What was your role / which stories did you work on
+Carol mostly worked on getting the app to run faster, better, and higher.  She did the best work possible but her contributions were overpowered and not well received by the fans.
 
-### 5) High score behavior
-- Your best score saves automatically when the game ends
-- It persists even after closing/restarting the app
-- Only a higher score overwrites the previous best score
++ What was the biggest challenge? 
+  + Managing pull requests and merges
++ Why was it a challenge?
+  + We were all new to git/github and not everyone followed convention
+  + How was the challenge addressed?
+  + I went to the TA for help and used ChatGPT and web resources to get more comfortable with git.
++ Favorite / most interesting part of this project
+  + Finally getting the IDs from the API calls to store in the ROOM database
++ If you could do it over, what would you change?
+  + I would get the ROOM database setup FIRST
++ What is the most valuable thing you learned?
+  + Do the work early and document EVERYTHING
 
----
 
-## Tech stack / features used
+## Conclusion
 
-- **Kotlin**
-- **Jetpack Compose** (UI)
-- **Room** (local database for users + bestScore)
-- **RetroFit** (Used to make interactions with RAWG API)
-- **MVVM** (ViewModel manages game state)
-
----
+- How successful was the project?
+  - Think in terms of what did you set out to do and what actually got done?
+- What was the largest victory?
+- Final assessment of the project
