@@ -6,6 +6,6 @@ data class Game(
     val metacritic: Int,
     val name: String,
     val released: String,
-    val guessed: Boolean = false,
-    val seen: Boolean = false
+    var guessed: Boolean = false,
+    var seen: Boolean = false
 )

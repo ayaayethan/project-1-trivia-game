@@ -134,6 +134,8 @@ class GamesViewModel(
             top = top.copy(seen = true),
             bot = bot.copy(seen = true)
         )
+        top.seen = true
+        bot.seen = true
         if (choice == 0) {
             if (!top.guessed) {
                 markAsGuessed(0)
