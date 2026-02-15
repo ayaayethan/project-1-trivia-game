@@ -10,7 +10,7 @@ This is a sports betting assitant that makes use of an API we found [here](https
 ## Introduction
 
 * How was communication managed?
- Coms were primarily managed on Discord and in-person meeting during class.
+* Coms were primarily managed on Discord and in-person meeting during class.
 * How many stories/issues were initially considered?
  
 * How many stories/issues were completed
