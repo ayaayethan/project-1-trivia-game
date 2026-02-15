@@ -93,7 +93,7 @@ class GamesViewModel(
      */
     fun startGame() {
         viewModelScope.launch {
-            if (queue.size <= 2) {
+            if (queue.size <= 6) {
                 fetchGames()
             }
 
@@ -171,7 +171,7 @@ class GamesViewModel(
             _stage.value = newStage
 
             // reload queue if it's running low
-            if (queue.size <= 2) {
+            if (queue.size <= 6) {
                 fetchGames()
             }
         }
