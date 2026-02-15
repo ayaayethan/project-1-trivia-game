@@ -18,7 +18,7 @@ This is a sports betting assitant that makes use of an API we found [here](https
 ## Team Retrospective
 
 ### Ethan Ayaay
-1. Ethan's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Aayaayethan)
+1. Ethan's Github PRs are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Aayaayethan)
 2. Ethan's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Aayaayethan)
 
 #### What was your role / which stories did you work on
