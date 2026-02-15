@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.cst438_project_1.ui.components.BrandingHeader
 import com.example.cst438_project_1.ui.components.GameButton
 import com.example.cst438_project_1.ui.theme.gametheme // Use the exact name from gametheme.kt
 
@@ -50,33 +50,20 @@ fun MainMenuScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                // Branding Header
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(top = 64.dp)
-                ) {
-                    Text(
-                        text = "GAME DIFF",
-                        style = MaterialTheme.typography.displayMedium.copy(
-                            fontWeight = FontWeight.Black,
-                            color = MaterialTheme.colorScheme.primary,
-                            letterSpacing = 4.sp
-                        )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    BrandingHeader(
+                        subtitle = {
+                            Text(
+                                text = "THE ULTIMATE RATING CHALLENGE",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.secondary,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     )
-                    Text(
-                        text = "THE ULTIMATE RATING CHALLENGE",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.secondary,
-                        textAlign = TextAlign.Center
-                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    GameButton(text = "Play Now", onClick = onPlayClick)
                 }
-
-                // Primary Action
-                GameButton(
-                    text = "Play Now",
-                    onClick = onPlayClick,
-                    modifier = Modifier.padding(bottom = 48.dp)
-                )
 
                 // Secondary Actions
                 Row(

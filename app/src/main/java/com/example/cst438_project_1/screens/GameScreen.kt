@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -12,9 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -24,25 +30,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.cst438_project_1.API.DataClass.Game
-import com.example.cst438_project_1.ui.theme.Cst438project1Theme
-import com.example.cst438_project_1.viewmodels.GamesViewModel
-import androidx.compose.ui.platform.LocalContext
-import com.example.cst438_project_1.data.db.AppDatabase
-import kotlinx.coroutines.flow.map
-import androidx.compose.runtime.collectAsState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.example.cst438_project_1.API.DataClass.Game
+import com.example.cst438_project_1.data.db.AppDatabase
+import com.example.cst438_project_1.ui.theme.Cst438project1Theme
 import com.example.cst438_project_1.ui.theme.CyberPurple
 import com.example.cst438_project_1.ui.theme.ElectricBlue
 import com.example.cst438_project_1.ui.theme.PurpleGrey40
 import com.example.cst438_project_1.ui.theme.gametheme
+import com.example.cst438_project_1.viewmodels.GamesViewModel
+import kotlinx.coroutines.flow.map
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -66,8 +72,10 @@ fun GameScreen(
     val userDao = remember { db.userDao() }
     var selectedGame by remember { mutableStateOf<Int?>(null) }
     var showRatings by remember { mutableStateOf(false) }
-    var boxOneColor by remember {mutableStateOf(PurpleGrey40)}
-    var boxTwoColor by remember {mutableStateOf(PurpleGrey40)}
+    var boxOneColor by remember { mutableStateOf(PurpleGrey40) }
+    var boxTwoColor by remember { mutableStateOf(PurpleGrey40) }
+    var topCardVisible by remember { mutableStateOf(true) }
+    var bottomCardVisible by remember { mutableStateOf(true) }
 
     val bestScore by userDao
         .observeBestScore(userId)
@@ -85,20 +93,37 @@ fun GameScreen(
         if (gameOver) {
             db.userDao().saveBestScoreIfHigher(userId, score)
             if (selectedGame == 0) {
-                boxOneColor = androidx.compose.ui.graphics.Color.Red
+                boxOneColor = Color.Red
             } else {
-                boxTwoColor = androidx.compose.ui.graphics.Color.Red
+                boxTwoColor = Color.Red
             }
         }
     }
     LaunchedEffect(showRatings) {
         if (showRatings && selectedGame != null && !gameOver) {
             if (selectedGame == 0) {
-                boxOneColor = androidx.compose.ui.graphics.Color.Green
+                boxOneColor = Color.Green
             } else {
-                boxTwoColor = androidx.compose.ui.graphics.Color.Green
+                boxTwoColor = Color.Green
             }
-            kotlinx.coroutines.delay(1500)
+            kotlinx.coroutines.delay(1000)
+
+            // determine which card to animate
+            if (selectedGame == 0) {
+                if (!stage!!.top!!.guessed) {
+                    bottomCardVisible = false
+                } else {
+                    topCardVisible = false
+                }
+            } else {
+                if (!stage!!.bot!!.guessed) {
+                    topCardVisible = false
+                } else {
+                    bottomCardVisible = false
+                }
+            }
+
+            kotlinx.coroutines.delay(500)
             gamesViewModel.advanceRound(selectedGame!!)
             showRatings = false
             boxOneColor = PurpleGrey40
@@ -106,9 +131,9 @@ fun GameScreen(
         }
     }
 
-    if (stage == null || stage!!.top == null || stage!!.bot == null ) {
+    if (stage == null || stage!!.top == null || stage!!.bot == null) {
         Text(
-            text ="Loading...",
+            text = "Loading...",
             modifier = Modifier
                 .padding(16.dp),
         )
@@ -155,7 +180,7 @@ fun GameScreen(
                     letterSpacing = 4.sp,
                     modifier = Modifier
                         .align(Alignment.TopStart)
-                        .padding(16.dp)
+                        .padding(start = 16.dp, top = 64.dp, end = 16.dp, bottom = 16.dp)
                 )
 
                 Column(
@@ -178,6 +203,7 @@ fun GameScreen(
                     ) {
                         AnimatedContent(
                             targetState = top,
+                            contentKey = { it?.id },
                             transitionSpec = {
                                 slideInHorizontally(
                                     animationSpec = tween(durationMillis = 700)
@@ -214,6 +240,7 @@ fun GameScreen(
                     ) {
                         AnimatedContent(
                             targetState = bottom,
+                            contentKey = { it?.id },
                             transitionSpec = {
                                 slideInHorizontally(
                                     animationSpec = tween(durationMillis = 700)
@@ -276,21 +303,21 @@ fun GameCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    androidx.compose.material3.Card(
+    Card(
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(16f / 9f)
             .padding(8.dp)
             .clickable { onClick() },
         shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
-        elevation = androidx.compose.material3.CardDefaults.cardElevation(8.dp)
+        elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Box {
             // Game image
-            coil.compose.AsyncImage(
+            AsyncImage(
                 model = game.background_image,
                 contentDescription = game.name,
-                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
             Column(
@@ -303,16 +330,16 @@ fun GameCard(
                 Box( // Game Title
                     modifier = Modifier
                         .background(
-                            androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f),
+                            Color.Black.copy(alpha = 0.5f),
                             shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
                         )
                         .padding(horizontal = 8.dp, vertical = 5.dp)
                 ) {
                     Text(
                         text = game.name,
-                        color = androidx.compose.ui.graphics.Color.White,
+                        color = Color.White,
                         style = MaterialTheme.typography.titleLarge,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        textAlign = TextAlign.Center
                     )
                 }
                 Spacer(modifier = Modifier.height(60.dp))
@@ -321,21 +348,21 @@ fun GameCard(
                     enter = fadeIn(),
                     exit = fadeOut()
                 ) {
-                        Box( // Game Rating
-                            modifier = Modifier
-                                .background(
-                                    androidx.compose.ui.graphics.Color.Black.copy(alpha = 0.5f),
-                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
-                                )
-                                .padding(horizontal = 8.dp, vertical = 5.dp)
-                        ) {
-                            Text(
-                                text = "${game.metacritic}/100",
-                                color = androidx.compose.ui.graphics.Color.White,
-                                fontSize = 24.sp,
-                                modifier = Modifier
+                    Box( // Game Rating
+                        modifier = Modifier
+                            .background(
+                                Color.Black.copy(alpha = 0.5f),
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
                             )
-                        }
+                            .padding(horizontal = 8.dp, vertical = 5.dp)
+                    ) {
+                        Text(
+                            text = "${game.metacritic}/100",
+                            color = Color.White,
+                            fontSize = 24.sp,
+                            modifier = Modifier
+                        )
+                    }
                 }
             }
 
