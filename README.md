@@ -18,9 +18,8 @@ This is a sports betting assitant that makes use of an API we found [here](https
 ## Team Retrospective
 
 ### Ethan Ayaay
-
-- [a link to your pull requests](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Aayaayethan)
-- [a link to your issues](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Aayaayethan)
+1. Ethan's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Aayaayethan)
+2. Ethan's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Aayaayethan)
 
 #### What was your role / which stories did you work on
 
@@ -32,28 +31,27 @@ This is a sports betting assitant that makes use of an API we found [here](https
 + What is the most valuable thing you learned?
 
 ### Justin Martinez
-1. Carol's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Awhosteenie)
-1. Carol's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Awhosteenie)
+1. Justin's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Awhosteenie)
+2. Justin's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Awhosteenie)
 
 #### What was your role / which stories did you work on
-Carol mostly worked on getting the app to run faster, better, and higher.  She did the best work possible but her contributions were overpowered and not well received by the fans.
-
+I built the base skeleton for the app screen flow and tracking score. I also implemented preloading of images to improve load times in the app.
 + What was the biggest challenge? 
-  + Managing pull requests and merges
++ Biggest challenge was learning Kotlin and Composable UI
 + Why was it a challenge?
-  + We were all new to git/github and not everyone followed convention
-  + How was the challenge addressed?
-  + I went to the TA for help and used ChatGPT and web resources to get more comfortable with git.
+  + I have used Java plenty before, but the structure of the Composable UI is something I have never done before. Having that learning curve while also working in a group was a new challenge.
++ How was the challenge addressed?
+ + Reviewing examples and iterating to see what worked allowed me to get an idea of what was expected.
 + Favorite / most interesting part of this project
-  + Finally getting the IDs from the API calls to store in the ROOM database
+  + The final product was very satisfying, it plays like a real game. Being able to see how it all works under the hood is a great insight.
 + If you could do it over, what would you change?
-  + I would get the ROOM database setup FIRST
+  + I would use GitHub issues a lot more, to make sure I always had something to do.
 + What is the most valuable thing you learned?
-  + Do the work early and document EVERYTHING
+  + I learned that merge conflicts can very easily present a brick wall, and that it's important to communicate with your teammates to avoid breaking their changes.
 
 ### Bhavishya Dash
 1. Bhavishya's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Abhavishyadash)
-1. Bhavishya's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Abhavishyadash)
+2. Bhavishya's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Abhavishyadash)
 
 #### What was your role / which stories did you work on
 I led the Room database implementation for user accounts and persistence, improved the app’s UI, added full dark mode theming, and implemented the high score system that saves and displays each user’s best score from the database.
@@ -72,8 +70,8 @@ I led the Room database implementation for user accounts and persistence, improv
   + Do the work early and document everything simultaenously. As we have already finished our project and tomorrow is submission, its sort of hard to recall where i found dificulty for the stuff I did 3 weeks ago.
 
 ### Anthony Brunetto
-1. Carol's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3AAnthony-Brunetto)
-1. Carol's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3AAnthony-Brunetto)
+1. Anthony's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3AAnthony-Brunetto)
+2. Anthony's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3AAnthony-Brunetto)
 
 #### What was your role / which stories did you work on
 I mainly worked on the gameplay screen UI providing feedback for correct and incorrect guesses, smoothly transitioning between rounds, and the help screen providing gameplay instructions.
