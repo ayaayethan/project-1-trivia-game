@@ -17,10 +17,10 @@ This is a sports betting assitant that makes use of an API we found [here](https
 
 ## Team Retrospective
 
-### Team Member name
+### Ethan Ayaay
 
-- [a link to your pull requests]()
-- [a link to your issues]()
+- [a link to your pull requests](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Aayaayethan)
+- [a link to your issues](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Aayaayethan)
 
 #### What was your role / which stories did you work on
 
@@ -31,9 +31,49 @@ This is a sports betting assitant that makes use of an API we found [here](https
 + If you could do it over, what would you change?
 + What is the most valuable thing you learned?
 
-### Carol Danvers
-1. Carol's pull requests are [here](https://github.com/Jonathan-Welham/Bits-Bots/pulls/@CarolDanvers)
-1. Carol's Github issues are [here](https://github.com/FedericoRubino/cst438_project2/issues/created_by/@FedericoRubino)
+### Justin Martinez
+1. Carol's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Awhosteenie)
+1. Carol's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Awhosteenie)
+
+#### What was your role / which stories did you work on
+Carol mostly worked on getting the app to run faster, better, and higher.  She did the best work possible but her contributions were overpowered and not well received by the fans.
+
++ What was the biggest challenge? 
+  + Managing pull requests and merges
++ Why was it a challenge?
+  + We were all new to git/github and not everyone followed convention
+  + How was the challenge addressed?
+  + I went to the TA for help and used ChatGPT and web resources to get more comfortable with git.
++ Favorite / most interesting part of this project
+  + Finally getting the IDs from the API calls to store in the ROOM database
++ If you could do it over, what would you change?
+  + I would get the ROOM database setup FIRST
++ What is the most valuable thing you learned?
+  + Do the work early and document EVERYTHING
+
+### Bhavishya Dash
+1. Bhavishya's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Abhavishyadash)
+1. Bhavishya's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Abhavishyadash)
+
+#### What was your role / which stories did you work on
+My role was to 
+
++ What was the biggest challenge? 
+  + Managing pull requests and merges
++ Why was it a challenge?
+  + We were all new to git/github and not everyone followed convention
+  + How was the challenge addressed?
+  + I went to the TA for help and used ChatGPT and web resources to get more comfortable with git.
++ Favorite / most interesting part of this project
+  + Finally getting the IDs from the API calls to store in the ROOM database
++ If you could do it over, what would you change?
+  + I would get the ROOM database setup FIRST
++ What is the most valuable thing you learned?
+  + Do the work early and document EVERYTHING
+
+### Anthony Brunetto
+1. Carol's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3AAnthony-Brunetto)
+1. Carol's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3AAnthony-Brunetto)
 
 #### What was your role / which stories did you work on
 Carol mostly worked on getting the app to run faster, better, and higher.  She did the best work possible but her contributions were overpowered and not well received by the fans.
