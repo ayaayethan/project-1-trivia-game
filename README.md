@@ -20,7 +20,7 @@ This is a Video Game rating guessing game that makes use of an API we found [her
 
 ### Ethan Ayaay
 1. Ethan's Github PRs are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Aayaayethan)
-2. Ethan's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Aayaayethan)
+2. Ethan's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20assignee%3Aayaayethan)
 
 #### What was your role / which stories did you work on
 I primarily worked on setting up our API by using the RetroFit library to fetch the data that we needed. I also created the Retrofit instance, repositories, data classes, as well as the GamesViewModel which contained methods used to fetch games, initialize gameplay, make guesses, and swap games from the stage.
@@ -40,7 +40,7 @@ I primarily worked on setting up our API by using the RetroFit library to fetch 
 
 ### Justin Martinez
 1. Justin's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Awhosteenie)
-2. Justin's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Awhosteenie)
+2. Justin's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20assignee%3Awhosteenie)
 
 #### What was your role / which stories did you work on
 I built the base skeleton for the app screen flow and tracking score. I also implemented preloading of images to improve load times in the app.
@@ -59,7 +59,7 @@ I built the base skeleton for the app screen flow and tracking score. I also imp
 
 ### Bhavishya Dash
 1. Bhavishya's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3Abhavishyadash)
-2. Bhavishya's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3Abhavishyadash)
+2. Bhavishya's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20assignee%3Abhavishyadash)
 
 #### What was your role / which stories did you work on
 I led the Room database implementation for user accounts and persistence, improved the app’s UI, added full dark mode theming, and implemented the high score system that saves and displays each user’s best score from the database.
@@ -79,7 +79,7 @@ I led the Room database implementation for user accounts and persistence, improv
 
 ### Anthony Brunetto
 1. Anthony's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3AAnthony-Brunetto)
-2. Anthony's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20author%3AAnthony-Brunetto)
+2. Anthony's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20assignee%3AAnthony-Brunetto)
 
 #### What was your role / which stories did you work on
 I mainly worked on the gameplay screen UI providing feedback for correct and incorrect guesses, smoothly transitioning between rounds, and the help screen providing gameplay instructions.
