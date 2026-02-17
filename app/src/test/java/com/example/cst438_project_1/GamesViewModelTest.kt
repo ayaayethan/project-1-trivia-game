@@ -243,4 +243,44 @@ class GamesViewModelTest {
         assertEquals(4, viewModel.stage.value!!.top!!.id)
         assertEquals(3, viewModel.stage.value!!.bot!!.id)
     }
+
+    @Test
+    fun `Queue is reloaded with 10 games when the queue has 6 or less games remaining`() = runTest {
+        val games = List(10) { i ->
+            Game(
+                id = i + 1,
+                name = "Game ${i + 1}",
+                released = "2001-11-15",
+                metacritic = 70 + i,
+                background_image = "https://example.com/image${i + 1}.jpg"
+            )
+        }
+
+        coEvery {
+            mockApi.getGames(
+                key = any(),
+                page = any(),
+                page_size = 10,
+                metacritic = "70,100",
+                platforms = "4,187,1,18,186,7,14,16"
+            )
+        } returns Response.success(GameList(results = games))
+
+        val viewModel = GamesViewModel(app);
+
+        // initialize stage. Pulls 2 games from queue
+        viewModel.startGame();
+        advanceUntilIdle();
+
+        assertEquals(8, GameRepository.queue.size);
+
+        // make 2 swaps, decreasing queue to 6
+        for (i in 0..1) {
+            viewModel.advanceRound(0);
+            advanceUntilIdle();
+        }
+
+        // Queue should reload and now have 16 games
+        assertEquals(16, GameRepository.queue.size);
+    }
 }
