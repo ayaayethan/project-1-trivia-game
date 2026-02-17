@@ -81,23 +81,22 @@ I led the Room database implementation for user accounts and persistence, improv
 1. Anthony's pull requests are [here](https://github.com/ayaayethan/project-1-trivia-game/pulls?q=is%3Apr+is%3Aclosed+author%3AAnthony-Brunetto)
 2. Anthony's Github issues are [here](https://github.com/ayaayethan/project-1-trivia-game/issues?q=is%3Aissue%20state%3Aclosed%20assignee%3AAnthony-Brunetto)
 
-#### What was your role / which stories did you work on
+### What was your role / which stories did you work on
+
 I mainly worked on the gameplay screen UI providing feedback for correct and incorrect guesses, smoothly transitioning between rounds, and the help screen providing gameplay instructions.
 
 + What was the biggest challenge? 
-  + Learning how to properly review pull requests
+  + The biggest challenge for me was learning how to properly review pull requests.
 + Why was it a challenge?
-  +  This was my first time using pull requests
-  +Initially I didn't know how to properly review a pull request
+  + This was my first time being a reviewer and using pull requests so I had to learn best practices.
 + How was the challenge addressed?
-  + I went to the TA for help and used ChatGPT and web resources to get more comfortable with git.
+  + This challenge was addressed by in class lectures about how to be a good reviewer as well as research online.
 + Favorite / most interesting part of this project
-  + In class lectures about how to be a good reviewer
-  + Researching online best practices
+  + I really enjoyed the team I worked with and working with GitHub issues + pull requests. I also found it very satisfying to use the app once it was finished.
 + If you could do it over, what would you change?
-  + I would probably use only one activity rather than two
+  + Initially I was unfamiliar with jetpack compose so I created two activities, one for login and another for the gameplay. Now after using compose on this project, I would have probably only have used one activity.
 + What is the most valuable thing you learned?
-  + Definitely learning GitHub issues + pull requests and how to be a code reviewer
+  + The most valuable thing I learned was definitely GitHub issues + pull requests and how to be a code reviewer. I also really enjoyed learning and using jetpack compose for android development.
 
 ## Conclusion
 - How successful was the project?
