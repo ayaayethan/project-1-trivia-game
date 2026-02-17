@@ -1,6 +1,6 @@
 # Project 01 Retrospective and overview
 
-[Video Walkthrough]
+[Video Walkthrough](https://www.youtube.com/watch?v=VNL0PVyvWK8)
 <!-- Ads have really ruined rick-rolling. -->
 [Github Repo](https://github.com/ayaayethan/project-1-trivia-game.git)
 
